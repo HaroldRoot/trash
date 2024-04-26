@@ -6,7 +6,7 @@
 #include <pwd.h>
 
 #define MAX_COMMAND_LENGTH 1024
-#define PROMPT_FORMAT "[%s@%s %s]$ "
+#define PROMPT_FORMAT "[%s@%s %s]%c "
 
 char *username = NULL;
 char *hostname = NULL;
@@ -38,7 +38,12 @@ void free_globals()
 
 void print_prompt()
 {
-	printf(PROMPT_FORMAT, username, hostname, current_directory);
+	char prompt_symbol = '$';
+	if (geteuid() == 0) {
+		prompt_symbol = '#';
+	}
+	printf(PROMPT_FORMAT, username, hostname, current_directory,
+	       prompt_symbol);
 }
 
 char *get_current_directory()
