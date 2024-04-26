@@ -8,7 +8,6 @@
 #define MAX_COMMAND_LENGTH 1024
 #define PROMPT_FORMAT "[%s@%s %s]$ "
 
-// Global pointers for username, hostname, and current directory
 char *username = NULL;
 char *hostname = NULL;
 char *current_directory = NULL;
@@ -25,7 +24,6 @@ void handle_builtin_command(char *command);
 
 void init_globals()
 {
-	// Initialize global pointers for username, hostname, and current directory
 	username = get_username();
 	hostname = get_hostname();
 	current_directory = get_current_directory();
@@ -33,7 +31,6 @@ void init_globals()
 
 void free_globals()
 {
-	// Free memory allocated for global variables
 	free(username);
 	free(hostname);
 	free(current_directory);
@@ -108,7 +105,6 @@ void execute_command(char *command)
 int is_builtin_command(char *command)
 {
 	if (strcmp(command, "exit") == 0) {
-		printf("Exiting trash...\n");
 		return 1;
 	}
 	return 0;
@@ -117,27 +113,15 @@ int is_builtin_command(char *command)
 void handle_builtin_command(char *command)
 {
 	if (strcmp(command, "exit") == 0) {
+		printf("Exiting trash...\n");
 		exit(EXIT_SUCCESS);
 	}
-}
-
-void cleanup()
-{
-	// Free dynamically allocated memory
-	char *username = get_username();
-	char *hostname = get_hostname();
-	char *current_directory = get_current_directory();
-
-	free(username);
-	free(hostname);
-	free(current_directory);
 }
 
 int main()
 {
 	char command[MAX_COMMAND_LENGTH];
 
-	// Initialize global variables
 	init_globals();
 
 	while (1) {
