@@ -4,8 +4,8 @@ CC = gcc
 # Compiler flags
 CFLAGS = -Wall -g
 
-# Source file
-SRC = shell.c
+# Source files
+SRC = shell.c prompt.c builtin.c cmd_exec.c utils.c
 
 # Output file
 OUT = shell
@@ -13,7 +13,7 @@ OUT = shell
 all: $(OUT)
 
 $(OUT): $(SRC)
-	$(CC) $(CFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) -o $@ $^
 
 run: $(OUT)
 	./$(OUT)
