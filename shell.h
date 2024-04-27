@@ -22,7 +22,8 @@ char *get_hostname();
 void print_prompt();
 char *trim_leading_space(char *str);
 CommandType type_of(const char *command);
-int check_exit(const char *command);
+CommandType check_exit(const char *command);
+CommandType check_cd(const char*command);
 void handle_builtin_command(const char *command, CommandType t);
 void execute_command(char *command);
 
