@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
 #include "shell.h"
 
 CommandType type_of(const char *command)
@@ -25,10 +26,12 @@ void handle_builtin_command(const char *command, CommandType t)
 		exit(EXIT_SUCCESS);
 		break;
 	case (BUILTIN_CD_PATH):
-		printf("cd path\n");
+		if (chdir(parse_path(command)) != 0)
+			perror("cd failed");
 		break;
 	case (BUILTIN_CD_DEFAULT):
-		printf("cd home\n");
+		if (chdir(get_home_directory()) != 0)
+			perror("cd failed");
 		break;
 	default:
 		break;
