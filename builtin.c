@@ -9,7 +9,11 @@
 CommandType type_of(const char *command)
 {
 	if (strncmp(command, "exit", strlen("exit")) == 0) {
-		return BUILTIN_EXIT;
+		if (check_exit(command)) {
+			return BUILTIN_EXIT;
+		} else {
+			return NOT_BUILTIN;
+		}
 	} else if (strncmp(command, "cd", strlen("cd")) == 0) {
 		int i = strlen("cd");
 		while (command[i] != '\0') {
@@ -40,5 +44,20 @@ void handle_builtin_command(const char *command, CommandType t)
 	default:
 		break;
 		// Add other builtin commands here
+	}
+}
+
+int check_exit(const char *str)
+{
+	const char *exit_str = "exit";
+	while (*exit_str != '\0' && *str != '\0' && *str == *exit_str) {
+		str++;
+		exit_str++;
+	}
+
+	if (*exit_str == '\0' && (*str == '\0' || isspace((unsigned char)*str))) {
+		return 1;
+	} else {
+		return 0;
 	}
 }
