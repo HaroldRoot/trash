@@ -6,15 +6,6 @@
 #include <string.h>
 #include "shell.h"
 
-int is_builtin_command(char *command)
-{
-	if (strcmp(command, "exit") == 0) {
-		return 1;
-	}
-	// Add other builtin commands here
-	return 0;
-}
-
 void execute_command(char *command)
 {
 	if (is_builtin_command(command)) {
