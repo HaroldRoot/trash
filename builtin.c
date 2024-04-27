@@ -7,7 +7,7 @@
 
 int is_builtin_command(char *command)
 {
-	if (strcmp(command, "exit") == 0) {
+	if (strncmp(command, "exit", strlen("exit")) == 0) {
 		return 1;
 	}
 	// Add other builtin commands here
@@ -16,7 +16,7 @@ int is_builtin_command(char *command)
 
 void handle_builtin_command(char *command)
 {
-	if (strcmp(command, "exit") == 0) {
+	if (strncmp(command, "exit", strlen("exit")) == 0) {
 		printf("Exiting trash...\n");
 		exit(EXIT_SUCCESS);
 	}
