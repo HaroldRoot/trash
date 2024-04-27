@@ -9,10 +9,10 @@
 void execute_command(char *command)
 {
 	command = trim_leading_space(command);
-	if (is_builtin_command(command)) {
-		handle_builtin_command(command);
-	} else {
-		// Implement executing non-builtin commands here
+	CommandType t = type_of(command);
+	if (t == NOT_BUILTIN) {
 		system(command);
+	} else {
+		handle_builtin_command(command, t);
 	}
 }
