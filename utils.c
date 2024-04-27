@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <string.h>
+#include <ctype.h>
 #include "shell.h"
 
 char *get_current_directory()
@@ -56,4 +57,11 @@ char *get_hostname()
 		exit(EXIT_FAILURE);
 	}
 	return hostname;
+}
+
+char *trim_leading_space(char *str)
+{
+	while (isspace((unsigned char)*str))
+		str++;
+	return str;
 }

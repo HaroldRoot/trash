@@ -8,6 +8,7 @@
 
 void execute_command(char *command)
 {
+	command = trim_leading_space(command);
 	if (is_builtin_command(command)) {
 		handle_builtin_command(command);
 	} else {

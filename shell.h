@@ -12,6 +12,7 @@ char *get_current_directory();
 char *get_username();
 char *get_hostname();
 void print_prompt();
+char *trim_leading_space(char *str);
 int is_builtin_command(char *command);
 void handle_builtin_command(char *command);
 void execute_command(char *command);
