@@ -1,5 +1,12 @@
 // shell.h
 
+#include <ctype.h>
+#include <pwd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 #ifndef SHELL_H
 #define SHELL_H
 
