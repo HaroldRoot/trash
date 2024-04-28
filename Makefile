@@ -2,7 +2,7 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -Wall -g
+CFLAGS = -Wall -Wextra -Werror -pedantic -g
 
 # Source files
 SRC = shell.c prompt.c builtin.c cmd_exec.c utils.c
