@@ -4,6 +4,7 @@
 
 void execute_command(char *command)
 {
+	command[strcspn(command, "\n")] = '\0';
 	command = trim_leading_space(command);
 	CommandType t = type_of(command);
 	if (t == NOT_BUILTIN) {

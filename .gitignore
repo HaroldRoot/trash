@@ -3,3 +3,7 @@
 
 # Ignore compiled binaries
 shell
+
+# Ignore test files
+test
+test.c

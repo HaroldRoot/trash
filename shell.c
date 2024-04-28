@@ -31,12 +31,10 @@ int main()
 
 		if (fgets(command, sizeof(command), stdin) == NULL) {
 			// Handle Ctrl+D or EOF
-			printf("\n");
+			printf("\nExiting trash...\n");
 			free_globals();	// Free memory before exiting
 			exit(EXIT_SUCCESS);
 		}
-		// Remove trailing newline character
-		command[strcspn(command, "\n")] = '\0';
 
 		execute_command(command);
 	}
