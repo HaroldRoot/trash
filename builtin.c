@@ -2,17 +2,6 @@
 
 #include "shell.h"
 
-CommandType type_of(const char *command)
-{
-	if (strncmp(command, "exit", 4) == 0) {
-		return check_exit(command);
-	} else if (strncmp(command, "cd", 2) == 0) {
-		return check_cd(command);
-	}
-	// Add other builtin commands here
-	return NOT_BUILTIN;
-}
-
 void handle_builtin_command(const char *command, CommandType t)
 {
 	switch (t) {
