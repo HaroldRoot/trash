@@ -25,17 +25,9 @@ void handle_builtin_command(const char *command, CommandType t)
 
 CommandType check_exit(const char *str)
 {
-	const char *exit_str = "exit";
-	while (*exit_str != '\0' && *str != '\0' && *str == *exit_str) {
-		str++;
-		exit_str++;
-	}
-
-	if (*exit_str == '\0' && (*str == '\0' || isspace((unsigned char)*str))) {
+	if (str[4] == ' ' || str[4] == '\0')
 		return BUILTIN_EXIT;
-	} else {
-		return NOT_BUILTIN;
-	}
+	return NOT_BUILTIN;
 }
 
 CommandType check_cd(const char *str)
