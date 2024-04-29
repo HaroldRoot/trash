@@ -5,7 +5,7 @@
 char *get_current_directory()
 {
 	char *cwd = (char *)malloc(MAX_COMMAND_LENGTH * sizeof(char));
-	check(cwd);
+	check_null(cwd);
 	exit_if(getcwd(cwd, MAX_COMMAND_LENGTH) == NULL);
 	// Replace user home directory path with ~
 	const char *home_dir = get_home_directory();
@@ -47,7 +47,7 @@ char *get_username()
 char *get_hostname()
 {
 	char *hostname = (char *)malloc(MAX_COMMAND_LENGTH * sizeof(char));
-	check(hostname);
+	check_null(hostname);
 	exit_if(gethostname(hostname, MAX_COMMAND_LENGTH) != 0);
 	return hostname;
 }

@@ -14,7 +14,7 @@
 #include <unistd.h>
 
 // Macros
-#define check(ptr) \
+#define check_null(ptr) \
 	do { \
 		if (ptr == NULL) { \
 			perror("memory allocation error"); \

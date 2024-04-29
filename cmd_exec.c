@@ -52,10 +52,10 @@ void handle_external_command(InputBuffer *input_buffer)
 char **parse_external_command(InputBuffer *input_buffer)
 {
 	char *full_command = strdup(input_buffer->buffer);
-	check(full_command);
+	check_null(full_command);
 
 	char *copy_command = malloc(input_buffer->input_length);
-	check(copy_command);
+	check_null(copy_command);
 	strcpy(copy_command, full_command);
 
 	const char *delim = " \t\r\n";
@@ -69,12 +69,12 @@ char **parse_external_command(InputBuffer *input_buffer)
 	num_tokens++;
 
 	char **argv = malloc(sizeof(char *) * num_tokens);
-	check(argv);
+	check_null(argv);
 	token = strtok(copy_command, delim);
 	int i;
 	for (i = 0; token != NULL; i++) {
 		argv[i] = malloc(strlen(token) + 1);
-		check(argv[i]);
+		check_null(argv[i]);
 		strcpy(argv[i], token);
 		token = strtok(NULL, delim);
 	}
