@@ -23,38 +23,37 @@ const char *find_alias(const char *name)
 	return NULL;
 }
 
-char *expand_alias(const char *command)
+char *expand_alias(const char *cmd)
 {
-	char *tmp_command = strdup(command);
+	char *tmp = strdup(cmd);
 
-	char *first_word = strtok(tmp_command, " \t\r\n");
+	char *first_word = strtok(tmp, " \t\r\n");
 
-	char *copy_command = strdup(command);
+	char *copy = strdup(cmd);
 
 	const char *replacement = find_alias(first_word);
 
 	if (replacement) {
 		size_t replacement_len = strlen(replacement);
 
-		char *actual_command = strdup(replacement);
+		char *actual = strdup(replacement);
 
-		char *rest_of_command = strtok(NULL, "");
+		char *rest = strtok(NULL, "");
 
-		if (rest_of_command) {
-			size_t rest_len = strlen(rest_of_command);
-			actual_command =
-			    realloc(actual_command,
-				    replacement_len + rest_len + 2);
-			strcat(actual_command, " ");
-			strcat(actual_command, rest_of_command);
+		if (rest) {
+			size_t rest_len = strlen(rest);
+			actual =
+			    realloc(actual, replacement_len + rest_len + 2);
+			strcat(actual, " ");
+			strcat(actual, rest);
 		}
 
-		free(tmp_command);
+		free(tmp);
 
-		return actual_command;
+		return actual;
 	} else {
-		free(tmp_command);
+		free(tmp);
 
-		return copy_command;
+		return copy;
 	}
 }

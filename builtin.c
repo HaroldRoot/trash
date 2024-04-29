@@ -2,7 +2,7 @@
 
 #include "shell.h"
 
-void handle_builtin_command(const char *command, CommandType t)
+void handle_builtin(const char *cmd, CmdType t)
 {
 	switch (t) {
 	case (BUILTIN_EXIT):
@@ -10,7 +10,7 @@ void handle_builtin_command(const char *command, CommandType t)
 		exit(EXIT_SUCCESS);
 		break;
 	case (BUILTIN_CD_PATH):
-		if (chdir(parse_path(command)) != 0)
+		if (chdir(parse_path(cmd)) != 0)
 			perror("cd failed");
 		break;
 	case (BUILTIN_CD_DEFAULT):
@@ -19,18 +19,18 @@ void handle_builtin_command(const char *command, CommandType t)
 		break;
 	default:
 		break;
-		// Add other builtin commands here
+		// Add other builtin cmds here
 	}
 }
 
-CommandType check_exit(const char *str)
+CmdType check_exit(const char *str)
 {
 	if (str[4] == ' ' || str[4] == '\0')
 		return BUILTIN_EXIT;
 	return NOT_BUILTIN;
 }
 
-CommandType check_cd(const char *str)
+CmdType check_cd(const char *str)
 {
 	if (str[2] != '\0' && str[2] != ' ') {
 		return NOT_BUILTIN;

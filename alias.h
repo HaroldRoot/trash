@@ -17,6 +17,6 @@ extern int num_aliases;
 
 void add_alias(const char *name, const char *replacement);
 const char *find_alias(const char *name);
-char *expand_alias(const char *command);
+char *expand_alias(const char *cmd);
 
 #endif 

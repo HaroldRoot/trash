@@ -2,46 +2,46 @@
 
 #include "shell.h"
 
-void execute_command(InputBuffer *input_buffer)
+void execute(InputBuffer *input_buffer)
 {
-	char *command = input_buffer->buffer;
-	command = trim_leading_space(command);
-	if (strlen(command) == 0)
+	char *cmd = input_buffer->buffer;
+	cmd = trim_leading_space(cmd);
+	if (strlen(cmd) == 0)
 		return;
 
-	char *actual_command = expand_alias(command);
+	char *actual = expand_alias(cmd);
 
-	CommandType t = type_of(actual_command);
+	CmdType t = type_of(actual);
 	if (t == NOT_BUILTIN) {
-		handle_external_command(actual_command);
+		handle_external(actual);
 	} else if (t == PIPELINE) {
-		system(actual_command);
+		system(actual);
 	} else {
-		handle_builtin_command(actual_command, t);
+		handle_builtin(actual, t);
 	}
 }
 
-CommandType type_of(const char *command)
+CmdType type_of(const char *cmd)
 {
-	if (strncmp(command, "exit", 4) == 0) {
-		return check_exit(command);
-	} else if (strncmp(command, "cd", 2) == 0) {
-		return check_cd(command);
-	} else if (strchr(command, '|') != NULL) {
+	if (strncmp(cmd, "exit", 4) == 0) {
+		return check_exit(cmd);
+	} else if (strncmp(cmd, "cd", 2) == 0) {
+		return check_cd(cmd);
+	} else if (strchr(cmd, '|') != NULL) {
 		return PIPELINE;
 	} else {
 		return NOT_BUILTIN;
 	}
 }
 
-void handle_external_command(char *command)
+void handle_external(char *cmd)
 {
-	char **argv = parse_external_command(command);
+	char **argv = parse(cmd);
 
-	ExecuteResult result = execute_external_command(argv);
+	ExecuteResult result = execute_external(argv);
 
 	if (result == EXECUTE_FAILURE) {
-		system(command);
+		system(cmd);
 	}
 
 	int i = 0;
@@ -52,18 +52,18 @@ void handle_external_command(char *command)
 	free(argv);
 }
 
-char **parse_external_command(char *command)
+char **parse(char *cmd)
 {
-	char *full_command = strdup(command);
-	check_null(full_command);
+	char *full = strdup(cmd);
+	check_null(full);
 
-	char *copy_command = strdup(full_command);
-	check_null(copy_command);
+	char *copy = strdup(full);
+	check_null(copy);
 
 	const char *delim = " \t\r\n";
 
 	int num_tokens = 0;
-	char *token = strtok(full_command, delim);
+	char *token = strtok(full, delim);
 	while (token != NULL) {
 		num_tokens++;
 		token = strtok(NULL, delim);
@@ -72,7 +72,7 @@ char **parse_external_command(char *command)
 
 	char **argv = malloc(sizeof(char *) * num_tokens);
 	check_null(argv);
-	token = strtok(copy_command, delim);
+	token = strtok(copy, delim);
 	int i;
 	for (i = 0; token != NULL; i++) {
 		argv[i] = malloc(strlen(token) + 1);
@@ -82,20 +82,20 @@ char **parse_external_command(char *command)
 	}
 	argv[i] = NULL;
 
-	free(full_command);
-	free(copy_command);
+	free(full);
+	free(copy);
 
 	return argv;
 }
 
-ExecuteResult execute_external_command(char **argv)
+ExecuteResult execute_external(char **argv)
 {
 	if (!argv) {
 		return EXECUTE_FAILURE;
 	}
 
-	char *command = argv[0];
-	char *actual_command = get_which(command);
+	char *cmd = argv[0];
+	char *actual = get_which(cmd);
 
 	pid_t pid = fork();
 
@@ -104,7 +104,7 @@ ExecuteResult execute_external_command(char **argv)
 		return EXECUTE_FAILURE;
 	} else if (pid == 0) {
 		// Child process
-		execve(actual_command, argv, NULL);
+		execve(actual, argv, NULL);
 		perror("execve");
 		exit(EXIT_FAILURE);
 	} else {

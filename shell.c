@@ -37,11 +37,11 @@ int main()
 		while (1) {
 			print_prompt();
 			read_input(input_buffer);
-			execute_command(input_buffer);
+			execute(input_buffer);
 		}
 	} else {
 		// shell is running in non-interactive mode
-		// execute commands from script or batch file
+		// execute cmds from script or batch file
 	}
 
 	return 0;

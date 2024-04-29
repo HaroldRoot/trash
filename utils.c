@@ -52,26 +52,25 @@ char *get_hostname()
 	return hostname;
 }
 
-char *get_which(char *command)
+char *get_which(char *cmd)
 {
 	char *path, *path_copy, *path_token, *file_path;
-	int command_length, directory_length;
+	int cmd_length, directory_length;
 	struct stat buffer;
 
 	path = getenv("PATH");
 
 	if (path) {
 		path_copy = strdup(path);
-		command_length = strlen(command);
+		cmd_length = strlen(cmd);
 		path_token = strtok(path_copy, ":");
 
 		while (path_token != NULL) {
 			directory_length = strlen(path_token);
-			file_path =
-			    malloc(command_length + directory_length + 2);
+			file_path = malloc(cmd_length + directory_length + 2);
 			strcpy(file_path, path_token);
 			strcat(file_path, "/");
-			strcat(file_path, command);
+			strcat(file_path, cmd);
 			strcat(file_path, "\0");
 
 			if (stat(file_path, &buffer) == 0) {
@@ -85,8 +84,8 @@ char *get_which(char *command)
 
 		free(path_copy);
 
-		if (stat(command, &buffer) == 0) {
-			return command;
+		if (stat(cmd, &buffer) == 0) {
+			return cmd;
 		}
 
 		return NULL;
@@ -139,10 +138,10 @@ char *extract_second_word(const char *str)
 	return second_word;
 }
 
-char *parse_path(const char *command)
+char *parse_path(const char *cmd)
 {
 	// 提取第二个单词
-	char *second_word = extract_second_word(command);
+	char *second_word = extract_second_word(cmd);
 
 	// 如果第二个单词以 '~' 开头，则替换为用户主目录
 	if (second_word[0] == '~') {
