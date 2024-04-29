@@ -9,16 +9,13 @@ char *get_current_directory()
 		perror("Memory allocation error");
 		exit(EXIT_FAILURE);
 	}
-
 	if (getcwd(cwd, MAX_COMMAND_LENGTH) == NULL) {
 		perror("getcwd() error");
 		exit(EXIT_FAILURE);
 	}
 	// Replace user home directory path with ~
-	struct passwd *pw = getpwuid(getuid());
-	const char *home_dir = pw->pw_dir;
+	const char *home_dir = get_home_directory();
 	size_t home_dir_len = strlen(home_dir);
-
 	if (strncmp(cwd, home_dir, home_dir_len) == 0) {
 		cwd[0] = '~';
 		memmove(cwd + 1, cwd + home_dir_len,
