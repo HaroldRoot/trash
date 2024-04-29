@@ -8,13 +8,16 @@ void execute_command(InputBuffer *input_buffer)
 	command = trim_leading_space(command);
 	if (strlen(command) == 0)
 		return;
-	CommandType t = type_of(command);
+
+	char *actual_command = expand_alias(command);
+
+	CommandType t = type_of(actual_command);
 	if (t == NOT_BUILTIN) {
-		handle_external_command(input_buffer);
+		handle_external_command(actual_command);
 	} else if (t == PIPELINE) {
-		system(input_buffer->buffer);
+		system(actual_command);
 	} else {
-		handle_builtin_command(command, t);
+		handle_builtin_command(actual_command, t);
 	}
 }
 
@@ -31,14 +34,14 @@ CommandType type_of(const char *command)
 	}
 }
 
-void handle_external_command(InputBuffer *input_buffer)
+void handle_external_command(char *command)
 {
-	char **argv = parse_external_command(input_buffer);
+	char **argv = parse_external_command(command);
 
 	ExecuteResult result = execute_external_command(argv);
 
 	if (result == EXECUTE_FAILURE) {
-		system(input_buffer->buffer);
+		system(command);
 	}
 
 	int i = 0;
@@ -49,14 +52,13 @@ void handle_external_command(InputBuffer *input_buffer)
 	free(argv);
 }
 
-char **parse_external_command(InputBuffer *input_buffer)
+char **parse_external_command(char *command)
 {
-	char *full_command = strdup(input_buffer->buffer);
+	char *full_command = strdup(command);
 	check_null(full_command);
 
-	char *copy_command = malloc(input_buffer->input_length);
+	char *copy_command = strdup(full_command);
 	check_null(copy_command);
-	strcpy(copy_command, full_command);
 
 	const char *delim = " \t\r\n";
 

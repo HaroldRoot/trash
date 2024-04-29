@@ -5,12 +5,18 @@
 char *username = NULL;
 char *hostname = NULL;
 char *current_directory = NULL;
+Alias aliases[MAX_ALIASES];
+int num_aliases = 0;
 
 void init_globals()
 {
 	username = get_username();
 	hostname = get_hostname();
 	current_directory = get_current_directory();
+
+	add_alias("la", "ls -A");
+	add_alias("greet", "echo Hello, world!");
+	num_aliases = 2;
 }
 
 void free_globals()

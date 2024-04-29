@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include "alias.h"
 
 // Macros
 #define check_null(ptr) \
@@ -73,8 +74,8 @@ char *extract_second_word(const char *str);
 char *parse_path(const char *str);
 
 void execute_command(InputBuffer *input_buffer);
-void handle_external_command(InputBuffer *input_buffer);
-char **parse_external_command(InputBuffer *input_buffer);
+void handle_external_command(char *command);
+char **parse_external_command(char *command);
 ExecuteResult execute_external_command(char **argv);
 
 CommandType type_of(const char *command);
