@@ -22,6 +22,13 @@ typedef enum {
 	NOT_BUILTIN
 } CommandType;
 
+// Structs
+typedef struct {
+	char *buffer;
+	size_t buffer_length;
+	ssize_t input_length;
+} InputBuffer;
+
 // Function declarations
 char *get_current_directory();
 char *get_home_directory();
@@ -30,11 +37,15 @@ char *get_hostname();
 
 void print_prompt();
 
+InputBuffer *new_input_buffer();
+void read_input(InputBuffer *input_buffer);
+void close_input_buffer(InputBuffer *input_buffer);
+
 char *trim_leading_space(char *str);
 char *extract_second_word(const char *str);
 char *parse_path(const char *str);
 
-void execute_command(char *command);
+void execute_command(InputBuffer *input_buffer);
 
 CommandType type_of(const char *command);
 CommandType check_exit(const char *command);
