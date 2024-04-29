@@ -5,14 +5,8 @@
 char *get_current_directory()
 {
 	char *cwd = (char *)malloc(MAX_COMMAND_LENGTH * sizeof(char));
-	if (cwd == NULL) {
-		perror("Memory allocation error");
-		exit(EXIT_FAILURE);
-	}
-	if (getcwd(cwd, MAX_COMMAND_LENGTH) == NULL) {
-		perror("getcwd() error");
-		exit(EXIT_FAILURE);
-	}
+	check(cwd);
+	exit_if(getcwd(cwd, MAX_COMMAND_LENGTH) == NULL);
 	// Replace user home directory path with ~
 	const char *home_dir = get_home_directory();
 	size_t home_dir_len = strlen(home_dir);
@@ -46,24 +40,15 @@ char *get_username()
 {
 	uid_t uid = geteuid();
 	struct passwd *pw = getpwuid(uid);
-	if (pw == NULL) {
-		perror("getpwuid() error");
-		exit(EXIT_FAILURE);
-	}
+	exit_if(pw == NULL);
 	return pw->pw_name;
 }
 
 char *get_hostname()
 {
 	char *hostname = (char *)malloc(MAX_COMMAND_LENGTH * sizeof(char));
-	if (hostname == NULL) {
-		perror("Memory allocation error");
-		exit(EXIT_FAILURE);
-	}
-	if (gethostname(hostname, MAX_COMMAND_LENGTH) != 0) {
-		perror("gethostname() error");
-		exit(EXIT_FAILURE);
-	}
+	check(hostname);
+	exit_if(gethostname(hostname, MAX_COMMAND_LENGTH) != 0);
 	return hostname;
 }
 

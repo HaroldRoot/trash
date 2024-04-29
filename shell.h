@@ -13,6 +13,23 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+// Macros
+#define check(ptr) \
+	do { \
+		if (ptr == NULL) { \
+			perror("memory allocation error"); \
+			exit(EXIT_FAILURE); \
+		} \
+	} while(0)
+
+#define exit_if(expression) \
+	do { \
+		if (expression) { \
+			perror("error: " #expression); \
+			exit(EXIT_FAILURE); \
+		} \
+	} while(0)
+
 // Constants
 #define MAX_COMMAND_LENGTH 1024
 #define PROMPT_FORMAT "[%s@%s %s]%c "

@@ -52,16 +52,10 @@ void handle_external_command(InputBuffer *input_buffer)
 char **parse_external_command(InputBuffer *input_buffer)
 {
 	char *full_command = strdup(input_buffer->buffer);
-	if (full_command == NULL) {
-		perror("memory allocation error");
-		exit(EXIT_FAILURE);
-	}
+	check(full_command);
 
 	char *copy_command = malloc(input_buffer->input_length);
-	if (copy_command == NULL) {
-		perror("memory allocation error");
-		exit(EXIT_FAILURE);
-	}
+	check(copy_command);
 	strcpy(copy_command, full_command);
 
 	const char *delim = " \t\r\n";
@@ -75,18 +69,12 @@ char **parse_external_command(InputBuffer *input_buffer)
 	num_tokens++;
 
 	char **argv = malloc(sizeof(char *) * num_tokens);
-	if (argv == NULL) {
-		perror("memory allocation error");
-		exit(EXIT_FAILURE);
-	}
+	check(argv);
 	token = strtok(copy_command, delim);
 	int i;
 	for (i = 0; token != NULL; i++) {
 		argv[i] = malloc(strlen(token) + 1);
-		if (argv[i] == NULL) {
-			perror("memory allocation error");
-			exit(EXIT_FAILURE);
-		}
+		check(argv[i]);
 		strcpy(argv[i], token);
 		token = strtok(NULL, delim);
 	}
