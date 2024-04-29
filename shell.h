@@ -80,9 +80,8 @@ void handle_external(char *cmd);
 char **parse(char *cmd);
 ExecuteResult execute_external(char **argv);
 
-CmdType type_of(const char *cmd);
-CmdType check_exit(const char *cmd);
-CmdType check_cd(const char *cmd);
+CmdType type_of(char **argv);
+CmdType check_cd(char **argv);
 
 void handle_builtin(const char *cmd, CmdType t);
 

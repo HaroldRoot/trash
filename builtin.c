@@ -23,28 +23,9 @@ void handle_builtin(const char *cmd, CmdType t)
 	}
 }
 
-CmdType check_exit(const char *str)
+CmdType check_cd(char **argv)
 {
-	if (str[4] == ' ' || str[4] == '\0')
-		return BUILTIN_EXIT;
-	return NOT_BUILTIN;
-}
-
-CmdType check_cd(const char *str)
-{
-	if (str[2] != '\0' && str[2] != ' ') {
-		return NOT_BUILTIN;
-	}
-
-	str += 2;
-
-	while (*str != '\0' && isspace((unsigned char)*str)) {
-		str++;
-	}
-
-	if (*str == '\0' || isspace((unsigned char)*str)) {
-		return BUILTIN_CD_DEFAULT;
-	}
-
-	return BUILTIN_CD_PATH;
+	if (argv[1])
+		return BUILTIN_CD_PATH;
+	return BUILTIN_CD_DEFAULT;
 }

@@ -10,25 +10,26 @@ void execute(InputBuffer *input_buffer)
 		return;
 
 	char *actual = expand_alias(cmd);
+	if (strchr(actual, '|') != NULL) {
+		system(actual);
+		return;
+	}
 
-	CmdType t = type_of(actual);
+	char **argv = parse(actual);
+	CmdType t = type_of(argv);
 	if (t == NOT_BUILTIN) {
 		handle_external(actual);
-	} else if (t == PIPELINE) {
-		system(actual);
 	} else {
 		handle_builtin(actual, t);
 	}
 }
 
-CmdType type_of(const char *cmd)
+CmdType type_of(char **argv)
 {
-	if (strncmp(cmd, "exit", 4) == 0) {
-		return check_exit(cmd);
-	} else if (strncmp(cmd, "cd", 2) == 0) {
-		return check_cd(cmd);
-	} else if (strchr(cmd, '|') != NULL) {
-		return PIPELINE;
+	if (strcmp(argv[0], "exit") == 0) {
+		return BUILTIN_EXIT;
+	} else if (strcmp(argv[0], "cd") == 0) {
+		return check_cd(argv);
 	} else {
 		return NOT_BUILTIN;
 	}
