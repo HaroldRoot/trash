@@ -2,6 +2,8 @@
 
 #include "shell.h"
 
+char startup_directory[PATH_MAX];
+char history_file_path[PATH_MAX + 50];
 char *username = NULL;
 char *hostname = NULL;
 char *current_directory = NULL;
@@ -10,6 +12,16 @@ int num_aliases = 0;
 
 void init_globals()
 {
+	size_t length =
+	    strlen(startup_directory) + strlen("/.trash_history") + 1;
+	if (length > sizeof(history_file_path)) {
+		fprintf(stderr, "Error: Path length exceeds limit.\n");
+		return;
+	}
+
+	snprintf(history_file_path, sizeof(history_file_path),
+		 "%s/.trash_history", startup_directory);
+
 	username = get_username();
 	hostname = get_hostname();
 	current_directory = get_current_directory();
@@ -29,18 +41,20 @@ void free_globals()
 
 int main()
 {
+	exit_if(getcwd(startup_directory, sizeof(startup_directory)) == NULL);
+	printf("startup_dir: %s\n", startup_directory);
+
 	if (isatty(STDIN_FILENO)) {
 		// shell is running in interactive mode
 		// display prompt and accept input from user
 		init_globals();
-		InputBuffer *input_buffer = new_input_buffer();
-
 		print_logo();
-
 		while (1) {
 			print_prompt();
-			read_input(input_buffer);
-			execute(input_buffer);
+			char *input = read_input();
+			save_history(input);
+			execute(input);
+			free(input);
 		}
 	} else {
 		// shell is running in non-interactive mode
@@ -50,35 +64,29 @@ int main()
 	return 0;
 }
 
-InputBuffer *new_input_buffer()
+char *read_input()
 {
-	InputBuffer *input_buffer = malloc(sizeof(InputBuffer));
-	input_buffer->buffer = NULL;
-	input_buffer->buffer_length = 0;
-	input_buffer->input_length = 0;
-
-	return input_buffer;
-}
-
-void read_input(InputBuffer *input_buffer)
-{
-	ssize_t bytes_read =
-	    getline(&(input_buffer->buffer), &(input_buffer->buffer_length),
-		    stdin);
-
-	if (bytes_read <= 0) {
-		// Handle Ctrl+D or EOF
-		printf("\nExiting trash...\n");
-		free_globals();	// Free memory before exiting
-		exit(EXIT_SUCCESS);
+	int bufsize = BUFSIZE;
+	int position = 0;
+	char *buffer = malloc(sizeof(char) * bufsize);
+	check_null(buffer);
+	int c;
+	while (1) {
+		c = getchar();
+		if (c == EOF) {
+			printf("Exiting trash...\n");
+			exit(EXIT_SUCCESS);
+		} else if (c == '\n') {
+			buffer[position] = '\0';
+			return buffer;
+		} else {
+			buffer[position] = c;
+		}
+		position++;
+		if (position >= bufsize) {
+			bufsize += BUFSIZE;
+			buffer = realloc(buffer, bufsize);
+			check_null(buffer);
+		}
 	}
-
-	input_buffer->input_length = bytes_read - 1;
-	input_buffer->buffer[bytes_read - 1] = 0;
-}
-
-void close_input_buffer(InputBuffer *input_buffer)
-{
-	free(input_buffer->buffer);
-	free(input_buffer);
 }

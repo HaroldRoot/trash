@@ -4,6 +4,7 @@
 #define SHELL_H
 
 #include <ctype.h>
+#include <limits.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,15 +35,19 @@
 
 // Constants
 #define MAX_COMMAND_LENGTH 1024
+#define BUFSIZE 64
 #define PROMPT_FORMAT "[%s@%s %s]%c "
 #define MAX_FILES 20
 #define MAX_FILENAME_LENGTH 20
 extern const char *builtins[];
+extern char startup_directory[PATH_MAX];
+extern char history_file_path[PATH_MAX + 50];
 
 // Enums
 typedef enum {
 	BUILTIN_EXIT,
 	BUILTIN_HELP,
+	BUILTIN_HISTORY,
 	BUILTIN_CD_PATH,
 	BUILTIN_CD_DEFAULT,
 	BUILTIN_ALIAS,
@@ -55,13 +60,6 @@ typedef enum {
 	EXECUTE_FAILURE
 } ExecuteResult;
 
-// Structs
-typedef struct {
-	char *buffer;
-	size_t buffer_length;
-	ssize_t input_length;
-} InputBuffer;
-
 // Function declarations
 char *get_current_directory();
 char *get_home_directory();
@@ -71,14 +69,12 @@ char *get_which(char *cmd);
 
 void print_prompt();
 
-InputBuffer *new_input_buffer();
-void read_input(InputBuffer *input_buffer);
-void close_input_buffer(InputBuffer *input_buffer);
+char *read_input();
 
 char *trim_leading_space(char *str);
 char *parse_path(char *str);
 
-void execute(InputBuffer *input_buffer);
+void execute(char *cmd);
 void handle_external(char *cmd);
 char **parse(char *cmd);
 ExecuteResult execute_external(char **argv);
@@ -91,5 +87,7 @@ void handle_builtin(char **argv, CmdType t);
 void print_help();
 void print_logo();
 int num_builtins();
+void save_history(char *input);
+void print_history();
 
 #endif				// SHELL_H

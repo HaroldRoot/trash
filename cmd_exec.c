@@ -4,9 +4,8 @@
 
 extern char **environ;
 
-void execute(InputBuffer *input_buffer)
+void execute(char *cmd)
 {
-	char *cmd = input_buffer->buffer;
 	cmd = trim_leading_space(cmd);
 	if (strlen(cmd) == 0)
 		return;
@@ -39,6 +38,8 @@ CmdType type_of(char **argv)
 		return BUILTIN_UNALIAS;
 	} else if (strcmp(cmd, "help") == 0) {
 		return BUILTIN_HELP;
+	} else if (strcmp(cmd, "history") == 0) {
+		return BUILTIN_HISTORY;
 	} else {
 		return NOT_BUILTIN;
 	}

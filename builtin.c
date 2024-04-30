@@ -2,7 +2,8 @@
 
 #include "shell.h"
 
-const char *builtins[] = { "alias", "cd", "exit", "help (h)", "unalias" };
+const char *builtins[] =
+    { "alias", "cd", "exit", "help (h)", "history", "unalias" };
 
 void handle_builtin(char **argv, CmdType t)
 {
@@ -13,6 +14,9 @@ void handle_builtin(char **argv, CmdType t)
 		break;
 	case (BUILTIN_HELP):
 		print_help();
+		break;
+	case (BUILTIN_HISTORY):
+		print_history();
 		break;
 	case (BUILTIN_CD_PATH):
 		if (chdir(parse_path(argv[1])) != 0)
@@ -92,4 +96,34 @@ void print_logo()
 int num_builtins()
 {
 	return sizeof(builtins) / sizeof(char *);
+}
+
+void save_history(char *input)
+{
+	FILE *fph = fopen(history_file_path, "a");
+	if (fph == NULL) {
+		perror("Unable to open history file");
+		return;
+	}
+
+	fprintf(fph, "%s\n", input);
+	fclose(fph);
+}
+
+void print_history()
+{
+
+	FILE *fph = fopen(history_file_path, "r");
+	if (fph == NULL) {
+		perror("Unable to open history file");
+		return;
+	}
+
+	char c = fgetc(fph);
+	while (c != EOF) {
+		printf("%c", c);
+		c = fgetc(fph);
+	}
+
+	fclose(fph);
 }

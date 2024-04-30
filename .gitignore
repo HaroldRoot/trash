@@ -1,5 +1,6 @@
 # Ignore temporary files
 *~
+.*swp
 
 # Ignore compiled binaries
 shell
@@ -7,3 +8,6 @@ shell
 # Ignore test files
 test
 test.c
+
+# Ignore history files
+.trash_history
