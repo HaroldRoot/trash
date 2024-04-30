@@ -125,6 +125,12 @@ ExecuteResult execute_external(char **argv)
 			} else {
 				return EXECUTE_FAILURE;
 			}
+		} else if (WIFSIGNALED(status)) {
+			// Child process was terminated by a signal
+			int signal_number = WTERMSIG(status);
+			fprintf(stderr, "Process was terminated by signal %d\n",
+				signal_number);
+			return EXECUTE_FAILURE;
 		} else {
 			// Child process exited abnormally
 			return EXECUTE_FAILURE;
