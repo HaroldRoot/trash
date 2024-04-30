@@ -42,8 +42,7 @@ typedef enum {
 	BUILTIN_CD_DEFAULT,
 	BUILTIN_ALIAS,
 	BUILTIN_UNALIAS,
-	NOT_BUILTIN,
-	PIPELINE
+	NOT_BUILTIN
 } CmdType;
 
 typedef enum {
@@ -72,8 +71,7 @@ void read_input(InputBuffer *input_buffer);
 void close_input_buffer(InputBuffer *input_buffer);
 
 char *trim_leading_space(char *str);
-char *extract_second_word(const char *str);
-char *parse_path(const char *str);
+char *parse_path(char *str);
 
 void execute(InputBuffer *input_buffer);
 void handle_external(char *cmd);
@@ -83,6 +81,6 @@ ExecuteResult execute_external(char **argv);
 CmdType type_of(char **argv);
 CmdType check_cd(char **argv);
 
-void handle_builtin(const char *cmd, CmdType t);
+void handle_builtin(char **argv, CmdType t);
 
 #endif				// SHELL_H

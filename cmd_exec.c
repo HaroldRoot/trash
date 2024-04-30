@@ -20,16 +20,21 @@ void execute(InputBuffer *input_buffer)
 	if (t == NOT_BUILTIN) {
 		handle_external(actual);
 	} else {
-		handle_builtin(actual, t);
+		handle_builtin(argv, t);
 	}
 }
 
 CmdType type_of(char **argv)
 {
-	if (strcmp(argv[0], "exit") == 0) {
+	char *cmd = argv[0];
+	if (strcmp(cmd, "exit") == 0) {
 		return BUILTIN_EXIT;
-	} else if (strcmp(argv[0], "cd") == 0) {
+	} else if (strcmp(cmd, "cd") == 0) {
 		return check_cd(argv);
+	} else if (strcmp(cmd, "alias") == 0) {
+		return BUILTIN_ALIAS;
+	} else if (strcmp(cmd, "unalias") == 0) {
+		return BUILTIN_UNALIAS;
 	} else {
 		return NOT_BUILTIN;
 	}

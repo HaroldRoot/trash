@@ -101,68 +101,26 @@ char *trim_leading_space(char *str)
 	return str;
 }
 
-char *extract_second_word(const char *str)
+char *parse_path(char *path)
 {
-	// 跳过字符串开头的空格
-	while (*str != '\0' && isspace((unsigned char)*str)) {
-		str++;
-	}
+	if (path[0] != '~')
+		return path;
 
-	// 跳过第一个单词
-	while (*str != '\0' && !isspace((unsigned char)*str)) {
-		str++;
-	}
+	// 获取用户主目录
+	char *home_dir = get_home_directory();
+	if (home_dir != NULL) {
+		// 计算新字符串的长度
+		int new_length = strlen(home_dir) + strlen(path) - 1;
 
-	// 跳过中间的空格
-	while (*str != '\0' && isspace((unsigned char)*str)) {
-		str++;
-	}
-
-	// 寻找第二个单词的结束位置
-	const char *start = str;
-	while (*str != '\0' && !isspace((unsigned char)*str)) {
-		str++;
-	}
-
-	// 计算第二个单词的长度
-	int length = str - start;
-
-	// 分配内存保存第二个单词，并复制内容
-	char *second_word = (char *)malloc(length + 1);
-	if (second_word == NULL) {
-		return NULL;	// 内存分配失败
-	}
-	strncpy(second_word, start, length);
-	second_word[length] = '\0';	// 添加字符串结束符
-
-	return second_word;
-}
-
-char *parse_path(const char *cmd)
-{
-	// 提取第二个单词
-	char *second_word = extract_second_word(cmd);
-
-	// 如果第二个单词以 '~' 开头，则替换为用户主目录
-	if (second_word[0] == '~') {
-		// 获取用户主目录
-		char *home_dir = get_home_directory();
-		if (home_dir != NULL) {
-			// 计算新字符串的长度
-			int new_length =
-			    strlen(home_dir) + strlen(second_word) - 1;
-
-			// 分配内存保存替换后的字符串
-			char *parsed_path = (char *)malloc(new_length + 1);
-			if (parsed_path != NULL) {
-				// 拼接用户主目录和第二个单词的剩余部分
-				snprintf(parsed_path, new_length + 1, "%s%s",
-					 home_dir, second_word + 1);
-				free(second_word);	// 释放第二个单词的内存
-				return parsed_path;
-			}
+		// 分配内存保存替换后的字符串
+		char *parsed_path = (char *)malloc(new_length + 1);
+		if (parsed_path != NULL) {
+			// 拼接用户主目录和第二个单词的剩余部分
+			snprintf(parsed_path, new_length + 1, "%s%s",
+				 home_dir, path + 1);
+			return parsed_path;
 		}
 	}
 
-	return second_word;
+	return path;
 }

@@ -5,8 +5,8 @@
 char *username = NULL;
 char *hostname = NULL;
 char *current_directory = NULL;
-Alias aliases[MAX_ALIASES];
-int num_aliases = 0;
+Alias *aliases_head;
+int num_aliases;
 
 void init_globals()
 {

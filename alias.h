@@ -5,18 +5,19 @@
 
 #include "shell.h"
 
-#define MAX_ALIASES 10
-
-typedef struct {
+typedef struct Alias {
 	char *name;
 	char *replacement;
+	struct Alias *next;
 } Alias;
 
-extern Alias aliases[MAX_ALIASES];
+extern Alias *aliases_head;
 extern int num_aliases;
 
+Alias *find_alias(const char *name);
 void add_alias(const char *name, const char *replacement);
-const char *find_alias(const char *name);
+void remove_alias(const char *name);
+void list_aliases();
 char *expand_alias(const char *cmd);
 
 #endif 
