@@ -37,6 +37,8 @@ CmdType type_of(char **argv)
 		return BUILTIN_ALIAS;
 	} else if (strcmp(cmd, "unalias") == 0) {
 		return BUILTIN_UNALIAS;
+	} else if (strcmp(cmd, "help") == 0) {
+		return BUILTIN_HELP;
 	} else {
 		return NOT_BUILTIN;
 	}

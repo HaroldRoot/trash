@@ -6,7 +6,7 @@ char *username = NULL;
 char *hostname = NULL;
 char *current_directory = NULL;
 Alias *aliases_head;
-int num_aliases;
+int num_aliases = 0;
 
 void init_globals()
 {
@@ -16,7 +16,8 @@ void init_globals()
 
 	add_alias("la", "ls -A");
 	add_alias("greet", "echo Hello, world!");
-	num_aliases = 2;
+	add_alias("h", "help");
+	num_aliases = 3;
 }
 
 void free_globals()
@@ -33,6 +34,8 @@ int main()
 		// display prompt and accept input from user
 		init_globals();
 		InputBuffer *input_buffer = new_input_buffer();
+
+		print_logo();
 
 		while (1) {
 			print_prompt();

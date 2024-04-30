@@ -1,0 +1,18 @@
+                                                                                
+         tttt                                                            hhhhhhh             
+      ttt:::t                                                            h:::::h             
+      t:::::t                                                            h:::::h             
+      t:::::t                                                            h:::::h             
+ttttttt:::::ttttttt   rrrrr   rrrrrrrrr   aaaaaaaaaaaaa      ssssssssss   h::::h hhhhh       
+t:::::::::::::::::t   r::::rrr:::::::::r  a::::::::::::a   ss::::::::::s  h::::hh:::::hhh    
+t:::::::::::::::::t   r:::::::::::::::::r aaaaaaaaa:::::ass:::::::::::::s h::::::::::::::hh  
+tttttt:::::::tttttt   rr::::::rrrrr::::::r         a::::as::::::ssss:::::sh:::::::hhh::::::h 
+      t:::::t          r:::::r     r:::::r  aaaaaaa:::::a s:::::s  ssssss h::::::h   h::::::h
+      t:::::t          r:::::r     rrrrrrraa::::::::::::a   s::::::s      h:::::h     h:::::h
+      t:::::t          r:::::r           a::::aaaa::::::a      s::::::s   h:::::h     h:::::h
+      t:::::t    ttttttr:::::r          a::::a    a:::::assssss   s:::::s h:::::h     h:::::h
+      t::::::tttt:::::tr:::::r          a::::a    a:::::as:::::ssss::::::sh:::::h     h:::::h
+      tt::::::::::::::tr:::::r          a:::::aaaa::::::as::::::::::::::s h:::::h     h:::::h
+        tt:::::::::::ttr:::::r           a::::::::::aa:::as:::::::::::ss  h:::::h     h:::::h
+          ttttttttttt  rrrrrrr            aaaaaaaaaa  aaaa sssssssssss    hhhhhhh     hhhhhhh
+

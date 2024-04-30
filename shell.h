@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -34,10 +35,14 @@
 // Constants
 #define MAX_COMMAND_LENGTH 1024
 #define PROMPT_FORMAT "[%s@%s %s]%c "
+#define MAX_FILES 20
+#define MAX_FILENAME_LENGTH 20
+extern const char *builtins[];
 
 // Enums
 typedef enum {
 	BUILTIN_EXIT,
+	BUILTIN_HELP,
 	BUILTIN_CD_PATH,
 	BUILTIN_CD_DEFAULT,
 	BUILTIN_ALIAS,
@@ -82,5 +87,9 @@ CmdType type_of(char **argv);
 CmdType check_cd(char **argv);
 
 void handle_builtin(char **argv, CmdType t);
+
+void print_help();
+void print_logo();
+int num_builtins();
 
 #endif				// SHELL_H
