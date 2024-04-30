@@ -2,6 +2,8 @@
 
 #include "shell.h"
 
+extern char **environ;
+
 void execute(InputBuffer *input_buffer)
 {
 	char *cmd = input_buffer->buffer;
@@ -110,7 +112,7 @@ ExecuteResult execute_external(char **argv)
 		return EXECUTE_FAILURE;
 	} else if (pid == 0) {
 		// Child process
-		execve(actual, argv, NULL);
+		execve(actual, argv, environ);
 		perror("execve");
 		exit(EXIT_FAILURE);
 	} else {
