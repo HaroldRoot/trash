@@ -127,11 +127,16 @@ void print_history()
 		return;
 	}
 
-	char c = fgetc(fph);
-	while (c != EOF) {
-		printf("%c", c);
-		c = fgetc(fph);
+	int line_number = 1;
+	char *line = NULL;
+	size_t len = 0;
+	ssize_t read;
+
+	while ((read = getline(&line, &len, fph)) != -1) {
+		printf("%4d  %s", line_number, line);
+		line_number++;
 	}
 
+	free(line);
 	fclose(fph);
 }
