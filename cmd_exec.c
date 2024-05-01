@@ -17,50 +17,26 @@ void execute(char *cmd)
 	}
 
 	char **argv = parse(actual);
-	CmdType t = type_of(argv);
-	if (t == NOT_BUILTIN) {
-		handle_external(actual);
-	} else {
-		handle_builtin(argv, t);
-	}
-}
-
-CmdType type_of(char **argv)
-{
-	char *cmd = argv[0];
-	if (strcmp(cmd, "exit") == 0) {
-		return BUILTIN_EXIT;
-	} else if (strcmp(cmd, "cd") == 0) {
-		return BUILTIN_CD;
-	} else if (strcmp(cmd, "alias") == 0) {
-		return BUILTIN_ALIAS;
-	} else if (strcmp(cmd, "unalias") == 0) {
-		return BUILTIN_UNALIAS;
-	} else if (strcmp(cmd, "help") == 0) {
-		return BUILTIN_HELP;
-	} else if (strcmp(cmd, "history") == 0) {
-		return BUILTIN_HISTORY;
-	} else {
-		return NOT_BUILTIN;
-	}
-}
-
-void handle_external(char *cmd)
-{
-	char **argv = parse(cmd);
-
-	ExecuteResult result = execute_external(argv);
-
-	if (result == EXECUTE_FAILURE) {
-		system(cmd);
+	if (handle_builtin(argv) != 0) {
+		handle_external(argv, actual);
 	}
 
+	free(actual);
 	int i = 0;
 	while (argv[i] != NULL) {
 		free(argv[i]);
 		i++;
 	}
 	free(argv);
+}
+
+void handle_external(char **argv, char *cmd)
+{
+	ExecuteResult result = execute_external(argv);
+
+	if (result == EXECUTE_FAILURE) {
+		system(cmd);
+	}
 }
 
 char **parse(char *cmd)

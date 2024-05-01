@@ -33,31 +33,29 @@
 		} \
 	} while(0)
 
-// Constants
+// Global constants and variables
 #define MAX_COMMAND_LENGTH 1024
 #define BUFSIZE 64
 #define PROMPT_FORMAT "[%s@%s %s]%c "
 #define MAX_FILES 20
 #define MAX_FILENAME_LENGTH 20
-extern const char *builtins[];
 extern char startup_directory[PATH_MAX];
 extern char history_file_path[PATH_MAX + 50];
 
 // Enums
 typedef enum {
-	BUILTIN_EXIT,
-	BUILTIN_HELP,
-	BUILTIN_HISTORY,
-	BUILTIN_CD,
-	BUILTIN_ALIAS,
-	BUILTIN_UNALIAS,
-	NOT_BUILTIN
-} CmdType;
-
-typedef enum {
 	EXECUTE_SUCCESS,
 	EXECUTE_FAILURE
 } ExecuteResult;
+
+// Function pointer type definition
+typedef void (*BuiltinHandler)(char **argv);
+
+// Struct
+typedef struct {
+	const char *name;
+	BuiltinHandler handler;
+} BuiltinCmd;
 
 // Function declarations
 char *get_current_directory();
@@ -74,15 +72,18 @@ char *trim_leading_space(char *str);
 char *parse_path(char *str);
 
 void execute(char *cmd);
-void handle_external(char *cmd);
 char **parse(char *cmd);
+void handle_external(char **argv, char *cmd);
 ExecuteResult execute_external(char **argv);
 
-CmdType type_of(char **argv);
+int handle_builtin(char **argv);
+void exit_shell(char **argv);
+void handle_cd(char **argv);
+void handle_alias(char **argv);
+void handle_unalias(char **argv);
+void handle_history(char **argv);
+void print_help(char **argv);
 
-void handle_builtin(char **argv, CmdType t);
-
-void print_help();
 void print_logo();
 int num_builtins();
 void save_history(char *input);

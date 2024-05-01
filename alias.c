@@ -101,6 +101,7 @@ char *expand_alias(const char *cmd)
 		}
 
 		free(tmp);
+		free(copy);
 		return actual;
 	} else {
 		free(tmp);

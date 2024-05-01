@@ -2,51 +2,41 @@
 
 #include "shell.h"
 
-const char *builtins[] =
-    { "alias", "cd", "exit", "help (h)", "history", "unalias" };
+BuiltinCmd builtins[] = {
+	{"exit", &exit_shell},
+	{"help", &print_help},
+	{"alias", &handle_alias},
+	{"unalias", &handle_unalias},
+	{"cd", &handle_cd},
+	{"history", &handle_history}
+};
 
-void handle_builtin(char **argv, CmdType t)
+int num_builtins()
 {
-	switch (t) {
-	case (BUILTIN_EXIT):
-		printf("Exiting trash...\n");
-		exit(EXIT_SUCCESS);
-		break;
-	case (BUILTIN_HELP):
-		print_help();
-		break;
-	case (BUILTIN_HISTORY):
-		print_history();
-		break;
-	case (BUILTIN_CD):
-		if (chdir
-		    (argv[1] ? parse_path(argv[1]) : get_home_directory()) != 0)
-			perror("cd failed");
-		break;
-	case (BUILTIN_ALIAS):
-		if (argv[1] == NULL) {
-			list_aliases();
-		} else if (argv[1] != NULL && argv[2] != NULL) {
-			add_alias(argv[1], argv[2]);
-		} else {
-			fprintf(stderr, "Usage: alias <alias> <replacement>\n");
-		}
-		break;
-	case (BUILTIN_UNALIAS):
-		if (argv[1] != NULL) {
-			remove_alias(argv[1]);
-		} else {
-			fprintf(stderr, "Usage: unalias <alias>\n");
-		}
-		break;
-	default:
-		break;
-		// Add other builtin cmds here
-	}
+	return sizeof(builtins) / sizeof(builtins[0]);
 }
 
-void print_help()
+int handle_builtin(char **argv)
 {
+	for (int i = 0; i < num_builtins(); i++) {
+		if (strcmp(argv[0], builtins[i].name) == 0) {
+			builtins[i].handler(argv);
+			return 0;
+		}
+	}
+	return 1;		// not builtin cmd
+}
+
+void exit_shell(char **argv)
+{
+	(void)argv;
+	printf("Exiting trash...\n");
+	exit(EXIT_SUCCESS);
+}
+
+void print_help(char **argv)
+{
+	(void)argv;
 	print_logo();
 
 	printf("TRASH is the abbreviation of TRAsh SHell.\n");
@@ -55,7 +45,7 @@ void print_help()
 
 	int i;
 	for (i = 0; i < num_builtins(); i++) {
-		printf("  %s\n", builtins[i]);
+		printf("  %s\n", builtins[i].name);
 	}
 
 	printf("\nUse 'man' command for information on external programs.\n");
@@ -83,9 +73,37 @@ void print_logo()
 	return;
 }
 
-int num_builtins()
+void handle_alias(char **argv)
 {
-	return sizeof(builtins) / sizeof(char *);
+	if (argv[1] == NULL) {
+		list_aliases();
+	} else if (argv[1] != NULL && argv[2] != NULL) {
+		add_alias(argv[1], argv[2]);
+	} else {
+		fprintf(stderr, "Usage: alias <alias> <replacement>\n");
+	}
+}
+
+void handle_unalias(char **argv)
+{
+	if (argv[1] != NULL) {
+		remove_alias(argv[1]);
+	} else {
+		fprintf(stderr, "Usage: unalias <alias>\n");
+	}
+}
+
+void handle_cd(char **argv)
+{
+	if (chdir(argv[1] ? parse_path(argv[1]) : get_home_directory()) != 0)
+		perror("cd failed");
+}
+
+void handle_history(char **argv)
+{
+	if (argv[1] == NULL) {
+		print_history();
+	}
 }
 
 void save_history(char *input)

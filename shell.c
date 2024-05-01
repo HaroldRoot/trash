@@ -74,7 +74,7 @@ char *read_input()
 	while (1) {
 		c = getchar();
 		if (c == EOF) {
-			printf("Exiting trash...\n");
+			printf("\nExiting trash...\n");
 			exit(EXIT_SUCCESS);
 		} else if (c == '\n') {
 			buffer[position] = '\0';
