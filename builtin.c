@@ -124,6 +124,60 @@ void save_history(char *input)
 
 	fprintf(fph, "%s\n", input);
 	fclose(fph);
+
+	trim_history();
+}
+
+void trim_history()
+{
+	// 打开历史文件以读取命令
+	FILE *fph = fopen(history_file_path, "r");
+	if (fph == NULL) {
+		perror("Unable to open history file for trimming");
+		return;
+	}
+	// 计算文件中的总行数
+	int total_lines = 0;
+	char *line = NULL;
+	size_t len = 0;
+	while (getline(&line, &len, fph) != -1) {
+		total_lines++;
+	}
+	free(line);
+	fclose(fph);
+
+	// 如果历史记录超过了 HISTSIZE，删除最早的记录
+	if (total_lines > HISTSIZE) {
+		// 打开历史文件以读取和写入
+		fph = fopen(history_file_path, "r+");
+		FILE *fp_temp = fopen("temp_history", "w");
+		if (fph == NULL || fp_temp == NULL) {
+			perror("Unable to open history files for trimming");
+			return;
+		}
+
+		int line_to_keep = total_lines - HISTSIZE;
+		int current_line = 0;
+
+		// 跳过不需要保留的行
+		while (current_line < line_to_keep
+		       && getline(&line, &len, fph) != -1) {
+			current_line++;
+		}
+
+		// 将剩余的行写入临时文件
+		while (getline(&line, &len, fph) != -1) {
+			fprintf(fp_temp, "%s", line);
+		}
+
+		free(line);
+		fclose(fph);
+		fclose(fp_temp);
+
+		// 替换旧的历史文件
+		remove(history_file_path);
+		rename("temp_history", history_file_path);
+	}
 }
 
 void print_history(int n)

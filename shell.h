@@ -39,6 +39,7 @@
 #define PROMPT_FORMAT "[%s@%s %s]%c "
 #define MAX_FILES 20
 #define MAX_FILENAME_LENGTH 20
+#define HISTSIZE 1000
 extern char startup_directory[PATH_MAX];
 extern char history_file_path[PATH_MAX + 50];
 
@@ -87,6 +88,7 @@ void print_help(char **argv);
 void print_logo();
 int num_builtins();
 void save_history(char *input);
+void trim_history();
 void print_history();
 
 #endif				// SHELL_H
