@@ -18,12 +18,9 @@ void handle_builtin(char **argv, CmdType t)
 	case (BUILTIN_HISTORY):
 		print_history();
 		break;
-	case (BUILTIN_CD_PATH):
-		if (chdir(parse_path(argv[1])) != 0)
-			perror("cd failed");
-		break;
-	case (BUILTIN_CD_DEFAULT):
-		if (chdir(get_home_directory()) != 0)
+	case (BUILTIN_CD):
+		if (chdir
+		    (argv[1] ? parse_path(argv[1]) : get_home_directory()) != 0)
 			perror("cd failed");
 		break;
 	case (BUILTIN_ALIAS):
@@ -46,13 +43,6 @@ void handle_builtin(char **argv, CmdType t)
 		break;
 		// Add other builtin cmds here
 	}
-}
-
-CmdType check_cd(char **argv)
-{
-	if (argv[1])
-		return BUILTIN_CD_PATH;
-	return BUILTIN_CD_DEFAULT;
 }
 
 void print_help()

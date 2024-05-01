@@ -48,8 +48,7 @@ typedef enum {
 	BUILTIN_EXIT,
 	BUILTIN_HELP,
 	BUILTIN_HISTORY,
-	BUILTIN_CD_PATH,
-	BUILTIN_CD_DEFAULT,
+	BUILTIN_CD,
 	BUILTIN_ALIAS,
 	BUILTIN_UNALIAS,
 	NOT_BUILTIN
@@ -80,7 +79,6 @@ char **parse(char *cmd);
 ExecuteResult execute_external(char **argv);
 
 CmdType type_of(char **argv);
-CmdType check_cd(char **argv);
 
 void handle_builtin(char **argv, CmdType t);
 

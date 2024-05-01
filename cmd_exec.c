@@ -31,7 +31,7 @@ CmdType type_of(char **argv)
 	if (strcmp(cmd, "exit") == 0) {
 		return BUILTIN_EXIT;
 	} else if (strcmp(cmd, "cd") == 0) {
-		return check_cd(argv);
+		return BUILTIN_CD;
 	} else if (strcmp(cmd, "alias") == 0) {
 		return BUILTIN_ALIAS;
 	} else if (strcmp(cmd, "unalias") == 0) {
