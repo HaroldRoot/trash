@@ -102,7 +102,15 @@ void handle_cd(char **argv)
 void handle_history(char **argv)
 {
 	if (argv[1] == NULL) {
-		print_history();
+		print_history(0);
+	} else {
+		int n = atoi(argv[1]);
+		if (n > 0) {
+			print_history(n);
+		} else {
+			fprintf(stderr,
+				"Error: Invalid number of commands to display.\n");
+		}
 	}
 }
 
@@ -118,22 +126,35 @@ void save_history(char *input)
 	fclose(fph);
 }
 
-void print_history()
+void print_history(int n)
 {
-
 	FILE *fph = fopen(history_file_path, "r");
 	if (fph == NULL) {
 		perror("Unable to open history file");
 		return;
 	}
-
-	int line_number = 1;
+	// 获取文件中的总行数
+	int total_lines = 0;
 	char *line = NULL;
 	size_t len = 0;
-	ssize_t read;
+	while (getline(&line, &len, fph) != -1) {
+		total_lines++;
+	}
+	rewind(fph);		// 重置文件指针到文件开头
 
-	while ((read = getline(&line, &len, fph)) != -1) {
-		printf("%4d  %s", line_number, line);
+	int line_number = 1;
+	int start_line = (n > 0) ? (total_lines - n + 1) : 1;
+	start_line = (start_line < 1) ? 1 : start_line;	// 确保起始行号不小于 1
+
+	// 跳过不需要打印的行
+	while (line_number < start_line && getline(&line, &len, fph) != -1) {
+		line_number++;
+	}
+
+	// 打印所需的历史记录行
+	while ((getline(&line, &len, fph)) != -1
+	       && (n == 0 || line_number >= start_line)) {
+		printf("%4d %s", line_number, line);
 		line_number++;
 	}
 
