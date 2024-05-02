@@ -42,42 +42,6 @@ void handle_external(char **argv, char *cmd)
 	}
 }
 
-char **parse(char *cmd)
-{
-	char *full = strdup(cmd);
-	check_null(full);
-
-	char *copy = strdup(full);
-	check_null(copy);
-
-	const char *delim = " \t\r\n";
-
-	int num_tokens = 0;
-	char *token = strtok(full, delim);
-	while (token != NULL) {
-		num_tokens++;
-		token = strtok(NULL, delim);
-	}
-	num_tokens++;
-
-	char **argv = malloc(sizeof(char *) * num_tokens);
-	check_null(argv);
-	token = strtok(copy, delim);
-	int i;
-	for (i = 0; token != NULL; i++) {
-		argv[i] = malloc(strlen(token) + 1);
-		check_null(argv[i]);
-		strcpy(argv[i], token);
-		token = strtok(NULL, delim);
-	}
-	argv[i] = NULL;
-
-	free(full);
-	free(copy);
-
-	return argv;
-}
-
 ExecuteResult execute_external(char **argv)
 {
 	if (!argv) {

@@ -34,6 +34,7 @@
 	} while(0)
 
 // Global constants and variables
+#define MAX_WORDS 128
 #define MAX_COMMAND_LENGTH 1024
 #define BUFSIZE 64
 #define PROMPT_FORMAT "[%s@%s %s]%c "
