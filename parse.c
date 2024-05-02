@@ -15,6 +15,17 @@ typedef enum {
 	IN_DOUBLE_QUOTING
 } State;
 
+void strip_quotes(char **word)
+{
+	size_t len = strlen(*word);
+	if (len >= 2 && ((*word)[0] == '\'' || (*word)[0] == '\"')
+	    && (*word)[0] == (*word)[len - 1]) {
+		memmove(*word, *word + 1, len - 2);
+		(*word)[len - 2] = '\0';
+		*word = realloc(*word, len - 1);
+	}
+}
+
 char **parse(char *cmd)
 {
 	char **argv = malloc(MAX_WORDS * sizeof(char *));
@@ -42,6 +53,7 @@ char **parse(char *cmd)
 		case IN_WORD:
 			if (isspace((unsigned char)*p)) {
 				if (word) {
+					strip_quotes(&word);
 					argv[argc++] = word;
 					word = NULL;
 				}
@@ -73,6 +85,7 @@ char **parse(char *cmd)
 	}
 
 	if (word) {
+		strip_quotes(&word);
 		argv[argc++] = word;
 	}
 	argv[argc] = NULL;	// Null-terminate the array
