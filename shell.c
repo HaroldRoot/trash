@@ -72,7 +72,7 @@ char *read_input()
 	int c;
 	while (1) {
 		c = getchar();
-		if (c == EOF) {
+		if (c == EOF && isatty(STDIN_FILENO)) {
 			printf("\nExiting trash...\n");
 			exit(EXIT_SUCCESS);
 		} else if (c == '\n') {

@@ -26,13 +26,11 @@
 		} \
 	} while(0)
 
-#define exit_if(expression) \
-	do { \
-		if (expression) { \
-			perror("error: " #expression); \
-			exit(EXIT_FAILURE); \
-		} \
-	} while(0)
+#define exit_if(cond) \
+	if ((cond)) { \
+		perror("error: " #cond); \
+		exit(EXIT_FAILURE); \
+	} \
 
 // Global constants and variables
 #define MAX_WORDS 128
