@@ -77,10 +77,21 @@ void handle_alias(char **argv)
 {
 	if (argv[1] == NULL) {
 		list_aliases();
-	} else if (argv[1] != NULL && argv[2] != NULL) {
-		add_alias(argv[1], argv[2]);
 	} else {
-		fprintf(stderr, "Usage: alias <alias> <replacement>\n");
+		char *equal_sign = strchr(argv[1], '=');
+		if (equal_sign != NULL && equal_sign != argv[1]
+		    && *(equal_sign + 1) != '\0') {
+			*equal_sign = '\0';
+			char *alias = argv[1];
+			char *replacement = equal_sign + 1;
+			char *dynamic_replacement = strdup(replacement);
+			check_null(dynamic_replacement);
+			strip_quotes(&dynamic_replacement);
+			add_alias(alias, dynamic_replacement);
+			free(dynamic_replacement);
+		} else {
+			fprintf(stderr, "Usage: alias <alias>=<replacement>\n");
+		}
 	}
 }
 

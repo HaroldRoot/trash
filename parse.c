@@ -15,17 +15,6 @@ typedef enum {
 	IN_DOUBLE_QUOTING
 } State;
 
-void strip_quotes(char **word)
-{
-	size_t len = strlen(*word);
-	if (len >= 2 && ((*word)[0] == '\'' || (*word)[0] == '\"')
-	    && (*word)[0] == (*word)[len - 1]) {
-		memmove(*word, *word + 1, len - 2);
-		(*word)[len - 2] = '\0';
-		*word = realloc(*word, len - 1);
-	}
-}
-
 char **parse(char *cmd)
 {
 	char **argv = malloc(MAX_WORDS * sizeof(char *));

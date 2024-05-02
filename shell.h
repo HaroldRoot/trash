@@ -72,6 +72,7 @@ char *read_input();
 
 char *trim_leading_space(char *str);
 char *parse_path(char *str);
+void strip_quotes(char **word);
 
 void execute(char *cmd);
 char **parse(char *cmd);
