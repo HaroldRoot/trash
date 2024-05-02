@@ -8,6 +8,7 @@ shell
 # Ignore test files
 test
 test.c
+test.txt
 
 # Ignore history files
 .trash_history

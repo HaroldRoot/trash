@@ -20,17 +20,48 @@ void execute(char *cmd)
 	if (argv[0] != NULL) {
 		save_history(cmd);
 	}
+
+	int i = 0;
+	int out_fd = -1;
+	int stdout_fd = dup(STDOUT_FILENO);
+	while (argv[i] != NULL) {
+		if (strcmp(argv[i], ">") == 0) {
+			out_fd =
+			    open(argv[i + 1], O_WRONLY | O_CREAT | O_TRUNC,
+				 0644);
+			if (out_fd < 0) {
+				perror("open");
+				exit(EXIT_FAILURE);
+			}
+			if (dup2(out_fd, STDOUT_FILENO) < 0) {
+				perror("dup2");
+				exit(EXIT_FAILURE);
+			}
+			close(out_fd);
+			free(argv[i]);
+			argv[i] = NULL;
+			free(argv[i + 1]);
+			argv[i + 1] = NULL;
+			break;
+		}
+		i++;
+	}
+
 	if (handle_builtin(argv) != 0) {
 		handle_external(argv, actual);
 	}
 
 	free(actual);
-	int i = 0;
+	i = 0;
 	while (argv[i] != NULL) {
 		free(argv[i]);
 		i++;
 	}
 	free(argv);
+	if (stdout_fd != -1) {
+		dup2(stdout_fd, STDOUT_FILENO);	// 恢复标准输出
+		close(stdout_fd);	// 关闭保存的标准输出文件描述符
+	}
 }
 
 void handle_external(char **argv, char *cmd)

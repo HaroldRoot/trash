@@ -4,6 +4,7 @@
 #define SHELL_H
 
 #include <ctype.h>
+#include <fcntl.h>
 #include <limits.h>
 #include <pwd.h>
 #include <stdio.h>
