@@ -168,17 +168,25 @@ void trim_history()
 	size_t len = 0;
 	while (getline(&line, &len, fph) != -1) {
 		total_lines++;
+		free(line);	// 释放 getline 分配的内存
+		line = NULL;	// 重置指针，防止 double free
 	}
-	free(line);
 	fclose(fph);
 
 	// 如果历史记录超过了 HISTSIZE，删除最早的记录
 	if (total_lines > HISTSIZE) {
-		// 打开历史文件以读取和写入
-		fph = fopen(history_file_path, "r+");
-		FILE *fp_temp = fopen("temp_history", "w");
-		if (fph == NULL || fp_temp == NULL) {
-			perror("Unable to open history files for trimming");
+		// 重新打开历史文件以读取和写入
+		fph = fopen(history_file_path, "r");
+		if (fph == NULL) {
+			perror("Unable to open history file for trimming");
+			return;
+		}
+
+		FILE *fp_temp = fopen("/tmp/temp_history", "w");	// 在 /tmp 目录中创建临时文件
+		if (fp_temp == NULL) {
+			perror
+			    ("Unable to open temporary history file for trimming");
+			fclose(fph);	// 确保关闭已打开的文件
 			return;
 		}
 
@@ -189,6 +197,8 @@ void trim_history()
 		while (current_line < line_to_keep
 		       && getline(&line, &len, fph) != -1) {
 			current_line++;
+			free(line);	// 释放 getline 分配的内存
+			line = NULL;	// 重置指针
 		}
 
 		// 将剩余的行写入临时文件，同时忽略空行
@@ -196,15 +206,18 @@ void trim_history()
 			if (strlen(line) > 1) {	// 忽略空行
 				fprintf(fp_temp, "%s", line);
 			}
+			free(line);	// 释放 getline 分配的内存
+			line = NULL;	// 重置指针
 		}
 
-		free(line);
-		fclose(fph);
-		fclose(fp_temp);
+		fclose(fph);	// 关闭历史文件
+		fclose(fp_temp);	// 关闭临时文件
 
 		// 替换旧的历史文件
-		remove(history_file_path);
-		rename("temp_history", history_file_path);
+		if (remove(history_file_path) != 0
+		    || rename("/tmp/temp_history", history_file_path) != 0) {
+			perror("Error replacing the history file");
+		}
 	}
 }
 
