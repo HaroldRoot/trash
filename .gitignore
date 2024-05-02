@@ -1,14 +1,7 @@
-# Ignore temporary files
-*~
-.*swp
-
-# Ignore compiled binaries
-shell
-
-# Ignore test files
-test
+*
+!*.c
 test.c
-test.txt
-
-# Ignore history files
-.trash_history
+!LICENSE
+!Makefile
+!logos/
+!logos/*.txt
