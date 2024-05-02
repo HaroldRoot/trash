@@ -52,7 +52,6 @@ int main()
 		while (1) {
 			print_prompt();
 			char *input = read_input();
-			save_history(input);
 			execute(input);
 			free(input);
 		}

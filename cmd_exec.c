@@ -17,6 +17,9 @@ void execute(char *cmd)
 	}
 
 	char **argv = parse(actual);
+	if (argv[0] != NULL) {
+		save_history(cmd);
+	}
 	if (handle_builtin(argv) != 0) {
 		handle_external(argv, actual);
 	}

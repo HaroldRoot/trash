@@ -116,14 +116,40 @@ void handle_history(char **argv)
 
 void save_history(char *input)
 {
-	FILE *fph = fopen(history_file_path, "a");
+	// 检查输入是否为空
+	if (input == NULL || strlen(input) == 0) {
+		return;
+	}
+	// 检查输入是否与最后一条历史记录相同
+	FILE *fph = fopen(history_file_path, "r");
 	if (fph == NULL) {
 		perror("Unable to open history file");
 		return;
 	}
 
-	fprintf(fph, "%s\n", input);
+	char last_line[PATH_MAX] = { 0 };
+	char *line = NULL;
+	size_t len = 0;
+	while (getline(&line, &len, fph) != -1) {
+		if (line[strlen(line) - 1] == '\n') {
+			line[strlen(line) - 1] = '\0';	// 移除换行符
+		}
+		strcpy(last_line, line);
+	}
+	free(line);
 	fclose(fph);
+
+	// 如果输入与最后一条历史记录不同，则保存
+	if (strcmp(last_line, input) != 0) {
+		fph = fopen(history_file_path, "a");
+		if (fph == NULL) {
+			perror("Unable to open history file");
+			return;
+		}
+
+		fprintf(fph, "%s\n", input);
+		fclose(fph);
+	}
 
 	trim_history();
 }
@@ -165,9 +191,11 @@ void trim_history()
 			current_line++;
 		}
 
-		// 将剩余的行写入临时文件
+		// 将剩余的行写入临时文件，同时忽略空行
 		while (getline(&line, &len, fph) != -1) {
-			fprintf(fp_temp, "%s", line);
+			if (strlen(line) > 1) {	// 忽略空行
+				fprintf(fp_temp, "%s", line);
+			}
 		}
 
 		free(line);
