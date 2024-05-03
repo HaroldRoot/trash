@@ -37,6 +37,8 @@ int main()
 {
 	init_globals();
 	print_logo();
+	printf("TRASH startup is completed.\n");
+	printf("Type 'help' for more information.\n");
 	while (1) {
 		print_prompt();
 		char *input = read_input();
