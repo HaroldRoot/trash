@@ -2,6 +2,18 @@
 
 #include "shell.h"
 
+#define remove_argv(); \
+	free(argv[i]); \
+	argv[i] = NULL; \
+	free(argv[i + 1]); \
+	argv[i + 1] = NULL; \
+	j = i + 2; \
+	while (argv[j] != NULL) { \
+		argv[j - 2] = argv[j]; \
+		argv[j] = NULL; \
+		j++; \
+	}
+
 extern char **environ;
 
 void execute(char *cmd)
@@ -34,32 +46,14 @@ void execute(char *cmd)
 				 0644);
 			exit_if(out_fd < 0);
 			exit_if(dup2(out_fd, STDOUT_FILENO) < 0);
-			free(argv[i]);
-			argv[i] = NULL;
-			free(argv[i + 1]);
-			argv[i + 1] = NULL;
-			j = i + 2;
-			while (argv[j] != NULL) {
-				argv[j - 2] = argv[j];
-				argv[j] = NULL;
-				j++;
-			}
+			remove_argv();
 		} else if (strcmp(argv[i], "2>") == 0) {
 			err_fd =
 			    open(argv[i + 1], O_WRONLY | O_CREAT | O_TRUNC,
 				 0644);
 			exit_if(err_fd < 0);
 			exit_if(dup2(err_fd, STDERR_FILENO) < 0);
-			free(argv[i]);
-			argv[i] = NULL;
-			free(argv[i + 1]);
-			argv[i + 1] = NULL;
-			j = i + 2;
-			while (argv[j] != NULL) {
-				argv[j - 2] = argv[j];
-				argv[j] = NULL;
-				j++;
-			}
+			remove_argv();
 		} else if (strcmp(argv[i], ">>") == 0
 			   || strcmp(argv[i], "1>>") == 0) {
 			out_fd =
@@ -67,32 +61,14 @@ void execute(char *cmd)
 				 0644);
 			exit_if(out_fd < 0);
 			exit_if(dup2(out_fd, STDOUT_FILENO) < 0);
-			free(argv[i]);
-			argv[i] = NULL;
-			free(argv[i + 1]);
-			argv[i + 1] = NULL;
-			j = i + 2;
-			while (argv[j] != NULL) {
-				argv[j - 2] = argv[j];
-				argv[j] = NULL;
-				j++;
-			}
+			remove_argv();
 		} else if (strcmp(argv[i], "2>>") == 0) {
 			err_fd =
 			    open(argv[i + 1], O_WRONLY | O_CREAT | O_APPEND,
 				 0644);
 			exit_if(err_fd < 0);
 			exit_if(dup2(err_fd, STDERR_FILENO) < 0);
-			free(argv[i]);
-			argv[i] = NULL;
-			free(argv[i + 1]);
-			argv[i + 1] = NULL;
-			j = i + 2;
-			while (argv[j] != NULL) {
-				argv[j - 2] = argv[j];
-				argv[j] = NULL;
-				j++;
-			}
+			remove_argv();
 		} else if (strcmp(argv[i], "2>&1") == 0) {
 			exit_if(dup2(STDOUT_FILENO, STDERR_FILENO) < 0);
 			free(argv[i]);
@@ -107,16 +83,7 @@ void execute(char *cmd)
 			in_fd = open(argv[i + 1], O_RDONLY);
 			exit_if(in_fd < 0);
 			exit_if(dup2(in_fd, STDIN_FILENO) < 0);
-			free(argv[i]);
-			argv[i] = NULL;
-			free(argv[i + 1]);
-			argv[i + 1] = NULL;
-			j = i + 2;
-			while (argv[j] != NULL) {
-				argv[j - 2] = argv[j];
-				argv[j] = NULL;
-				j++;
-			}
+			remove_argv();
 		} else {
 			i++;
 		}
