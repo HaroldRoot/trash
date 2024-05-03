@@ -1,3 +1,5 @@
+// tokenize.c
+
 #include "shell.h"
 
 #define APPEND_CHAR() \
@@ -15,7 +17,7 @@ typedef enum {
 	IN_DOUBLE_QUOTING
 } State;
 
-char **parse(char *cmd)
+char **tokenize(char *cmd)
 {
 	char **argv = malloc(MAX_WORDS * sizeof(char *));
 	int argc = 0;

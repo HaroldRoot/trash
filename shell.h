@@ -75,7 +75,7 @@ char *parse_path(char *str);
 void strip_quotes(char **word);
 
 void execute(char *cmd);
-char **parse(char *cmd);
+char **tokenize(char *cmd);
 void handle_external(char **argv, char *cmd);
 ExecuteResult execute_external(char **argv);
 

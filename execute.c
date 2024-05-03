@@ -13,7 +13,7 @@ void execute(char *cmd)
 	save_history(cmd);
 
 	char *actual = expand_alias(cmd);
-	char **argv = parse(actual);
+	char **argv = tokenize(actual);
 
 	int in_fd = -1, out_fd = -1, err_fd = -1;
 	int stdin_copy = dup(STDIN_FILENO);
