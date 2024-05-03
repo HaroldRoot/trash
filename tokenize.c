@@ -83,3 +83,37 @@ char **tokenize(char *cmd)
 
 	return argv;
 }
+
+char *detokenize(char **argv)
+{
+	int argc = 0;
+	while (argv[argc] != NULL) {
+		argc++;
+	}
+
+	// 首先，计算所需的总长度
+	size_t total_length = 0;
+	for (int i = 0; i < argc && argv[i] != NULL; ++i) {
+		total_length += strlen(argv[i]) + 1;	// 加1为了空格
+	}
+
+	// 分配足够的内存来存储合并后的字符串，包括终止符 '\0'
+	char *cmd = malloc(total_length);
+	if (cmd == NULL) {
+		perror("malloc failed");
+		return NULL;
+	}
+	// 初始化第一个字符为终止符，以便开始使用 strcat
+	cmd[0] = '\0';
+
+	// 遍历字符串数组，将每个字符串拼接到结果中
+	for (int i = 0; i < argc && argv[i] != NULL; ++i) {
+		strcat(cmd, argv[i]);
+		// 如果不是最后一个字符串，添加一个空格
+		if (argv[i + 1] != NULL) {
+			strcat(cmd, " ");
+		}
+	}
+
+	return cmd;
+}

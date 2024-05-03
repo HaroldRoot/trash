@@ -68,6 +68,7 @@ char *get_which(char *cmd);
 void print_prompt();
 
 char *read_input();
+void process(char *input);
 
 char *trim_leading_space(char *str);
 char *parse_path(char *str);
@@ -75,6 +76,7 @@ void strip_quotes(char **word);
 
 void execute(char *cmd);
 char **tokenize(char *cmd);
+char *detokenize(char **argv);
 void handle_external(char **argv, char *cmd);
 ExecuteResult execute_external(char **argv);
 
