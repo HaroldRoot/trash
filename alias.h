@@ -20,4 +20,4 @@ void remove_alias(const char *name);
 void list_aliases();
 char *expand_alias(const char *cmd);
 
-#endif 
+#endif

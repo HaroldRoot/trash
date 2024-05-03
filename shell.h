@@ -16,6 +16,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include "alias.h"
+#include "redirect.h"
 
 // Macros
 #define check_null(ptr) \
