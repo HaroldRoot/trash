@@ -2,22 +2,6 @@
 
 #include "shell.h"
 
-#define CLOSE_AND_FREE(fd) \
-	do { \
-		if (fd != -1) { \
-			close(fd); \
-			fd = -1; \
-		} \
-		if (argv[i]) { \
-			free(argv[i]); \
-			argv[i] = NULL; \
-		} \
-		if (argv[i + 1]) { \
-			free(argv[i + 1]); \
-			argv[i + 1] = NULL; \
-		} \
-	} while (0)
-
 extern char **environ;
 
 void execute(char *cmd)
@@ -26,19 +10,22 @@ void execute(char *cmd)
 	if (strlen(cmd) == 0)
 		return;
 
+	save_history(cmd);
+
 	char *actual = expand_alias(cmd);
 
 	char **argv = parse(actual);
-	if (argv[0] != NULL) {
-		save_history(cmd);
-	}
 
-	int i = 0;
-	int in_fd = -1, out_fd = 1, err_fd = -1;
-	int stdout_fd = dup(STDOUT_FILENO);
-	exit_if(stdout_fd == -1);
-	int stderr_fd = dup(STDERR_FILENO);
-	exit_if(stderr_fd == -1);
+	int in_fd = -1, out_fd = -1, err_fd = -1;
+	int stdin_copy = dup(STDIN_FILENO);
+	exit_if(stdin_copy < 0);
+	int stdout_copy = dup(STDOUT_FILENO);
+	exit_if(stdout_copy < 0);
+	int stderr_copy = dup(STDERR_FILENO);
+	exit_if(stderr_copy < 0);
+
+	int i = 1;
+	int j = i + 2;
 
 	while (argv[i] != NULL) {
 		if (strcmp(argv[i], ">") == 0 || strcmp(argv[i], "1>") == 0) {
@@ -47,14 +34,32 @@ void execute(char *cmd)
 				 0644);
 			exit_if(out_fd < 0);
 			exit_if(dup2(out_fd, STDOUT_FILENO) < 0);
-			CLOSE_AND_FREE(out_fd);
+			free(argv[i]);
+			argv[i] = NULL;
+			free(argv[i + 1]);
+			argv[i + 1] = NULL;
+			j = i + 2;
+			while (argv[j] != NULL) {
+				argv[j - 2] = argv[j];
+				argv[j] = NULL;
+				j++;
+			}
 		} else if (strcmp(argv[i], "2>") == 0) {
 			err_fd =
 			    open(argv[i + 1], O_WRONLY | O_CREAT | O_TRUNC,
 				 0644);
 			exit_if(err_fd < 0);
 			exit_if(dup2(err_fd, STDERR_FILENO) < 0);
-			CLOSE_AND_FREE(err_fd);
+			free(argv[i]);
+			argv[i] = NULL;
+			free(argv[i + 1]);
+			argv[i + 1] = NULL;
+			j = i + 2;
+			while (argv[j] != NULL) {
+				argv[j - 2] = argv[j];
+				argv[j] = NULL;
+				j++;
+			}
 		} else if (strcmp(argv[i], ">>") == 0
 			   || strcmp(argv[i], "1>>") == 0) {
 			out_fd =
@@ -62,25 +67,59 @@ void execute(char *cmd)
 				 0644);
 			exit_if(out_fd < 0);
 			exit_if(dup2(out_fd, STDOUT_FILENO) < 0);
-			CLOSE_AND_FREE(out_fd);
+			free(argv[i]);
+			argv[i] = NULL;
+			free(argv[i + 1]);
+			argv[i + 1] = NULL;
+			j = i + 2;
+			while (argv[j] != NULL) {
+				argv[j - 2] = argv[j];
+				argv[j] = NULL;
+				j++;
+			}
 		} else if (strcmp(argv[i], "2>>") == 0) {
 			err_fd =
 			    open(argv[i + 1], O_WRONLY | O_CREAT | O_APPEND,
 				 0644);
 			exit_if(err_fd < 0);
 			exit_if(dup2(err_fd, STDERR_FILENO) < 0);
-			CLOSE_AND_FREE(err_fd);
-		} else if (strcmp(argv[i], "2>&1") == 0) {
-			exit_if(dup2(stdout_fd, STDERR_FILENO) < 0);
 			free(argv[i]);
 			argv[i] = NULL;
+			free(argv[i + 1]);
+			argv[i + 1] = NULL;
+			j = i + 2;
+			while (argv[j] != NULL) {
+				argv[j - 2] = argv[j];
+				argv[j] = NULL;
+				j++;
+			}
+		} else if (strcmp(argv[i], "2>&1") == 0) {
+			exit_if(dup2(STDOUT_FILENO, STDERR_FILENO) < 0);
+			free(argv[i]);
+			argv[i] = NULL;
+			j = i + 1;
+			while (argv[j] != NULL) {
+				argv[j - 1] = argv[j];
+				argv[j] = NULL;
+				j++;
+			}
 		} else if (strcmp(argv[i], "<") == 0) {
 			in_fd = open(argv[i + 1], O_RDONLY);
 			exit_if(in_fd < 0);
 			exit_if(dup2(in_fd, STDIN_FILENO) < 0);
-			CLOSE_AND_FREE(in_fd);
+			free(argv[i]);
+			argv[i] = NULL;
+			free(argv[i + 1]);
+			argv[i + 1] = NULL;
+			j = i + 2;
+			while (argv[j] != NULL) {
+				argv[j - 2] = argv[j];
+				argv[j] = NULL;
+				j++;
+			}
+		} else {
+			i++;
 		}
-		i++;
 	}
 
 	if (handle_builtin(argv) != 0) {
@@ -95,10 +134,17 @@ void execute(char *cmd)
 	}
 	free(argv);
 
-	dup2(stdout_fd, STDOUT_FILENO);
-	close(stdout_fd);
-	dup2(stderr_fd, STDERR_FILENO);
-	close(stderr_fd);
+	dup2(stdin_copy, STDIN_FILENO);
+	close(stdin_copy);
+	clearerr(stdin);
+	dup2(stdout_copy, STDOUT_FILENO);
+	close(stdout_copy);
+	dup2(stderr_copy, STDERR_FILENO);
+	close(stderr_copy);
+
+	close(in_fd);
+	close(out_fd);
+	close(err_fd);
 }
 
 void handle_external(char **argv, char *cmd)
@@ -130,14 +176,12 @@ ExecuteResult execute_external(char **argv)
 
 	if (pid == -1) {
 		perror("fork");
-		free(actual);
 		return EXECUTE_FAILURE;
 	} else if (pid == 0) {
 		execve(actual, argv, environ);
 		perror("execve");
 		exit(EXIT_FAILURE);
 	} else {
-		free(actual);
 		int status;
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status)) {
