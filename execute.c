@@ -69,7 +69,7 @@ ExecuteResult execute_external(char **argv)
 	} else if (pid == 0) {
 		execve(actual, argv, environ);
 		perror("execve");
-		exit(EXIT_FAILURE);
+		_exit(EXIT_FAILURE);
 	} else {
 		int status;
 		waitpid(pid, &status, 0);
