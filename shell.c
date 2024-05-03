@@ -12,13 +12,7 @@ int num_aliases = 0;
 
 void init_globals()
 {
-	size_t length =
-	    strlen(startup_directory) + strlen("/.trash_history") + 1;
-	if (length > sizeof(history_file_path)) {
-		fprintf(stderr, "Error: Path length exceeds limit.\n");
-		return;
-	}
-
+	getcwd(startup_directory, sizeof(startup_directory));
 	snprintf(history_file_path, sizeof(history_file_path),
 		 "%s/.trash_history", startup_directory);
 
@@ -26,8 +20,8 @@ void init_globals()
 	hostname = get_hostname();
 	current_directory = get_current_directory();
 
-	add_alias("la", "ls -A");
 	add_alias("greet", "echo Hello, world!");
+	add_alias("la", "ls -A");
 	add_alias("h", "help");
 	num_aliases = 3;
 }
@@ -41,25 +35,14 @@ void free_globals()
 
 int main()
 {
-	exit_if(getcwd(startup_directory, sizeof(startup_directory)) == NULL);
-	printf("startup_dir: %s\n", startup_directory);
-
-	if (isatty(STDIN_FILENO)) {
-		// shell is running in interactive mode
-		// display prompt and accept input from user
-		init_globals();
-		print_logo();
-		while (1) {
-			print_prompt();
-			char *input = read_input();
-			execute(input);
-			free(input);
-		}
-	} else {
-		// shell is running in non-interactive mode
-		// execute cmds from script or batch file
+	init_globals();
+	print_logo();
+	while (1) {
+		print_prompt();
+		char *input = read_input();
+		execute(input);
+		free(input);
 	}
-
 	return 0;
 }
 
@@ -72,7 +55,7 @@ char *read_input()
 	int c;
 	while (1) {
 		c = getchar();
-		if (c == EOF && isatty(STDIN_FILENO)) {
+		if (c == EOF) {
 			printf("\nExiting trash...\n");
 			exit(EXIT_SUCCESS);
 		} else if (c == '\n') {
