@@ -17,6 +17,7 @@
 #include <unistd.h>
 #include "alias.h"
 #include "redirect.h"
+#include "init.h"
 
 // Macros
 #define check_null(ptr) \
@@ -41,8 +42,6 @@
 #define MAX_FILES 20
 #define MAX_FILENAME_LENGTH 20
 #define HISTSIZE 1000
-extern char startup_directory[PATH_MAX];
-extern char history_file_path[PATH_MAX + 50];
 
 // Enums
 typedef enum {

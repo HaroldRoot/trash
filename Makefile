@@ -5,7 +5,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror -pedantic -g
 
 # Source files
-SRC = shell.c prompt.c builtin.c execute.c utils.c alias.c tokenize.c redirect.c
+SRC = shell.c prompt.c builtin.c execute.c utils.c alias.c tokenize.c redirect.c init.c
 
 # Output file
 OUT = shell
