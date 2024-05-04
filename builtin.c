@@ -131,6 +131,16 @@ void save_history(char *input)
 	if (input == NULL || strlen(input) == 0) {
 		return;
 	}
+	// 检查历史文件路径是否存在，如果不存在则创建
+	struct stat st = { 0 };
+	if (stat(history_file_path, &st) == -1) {
+		FILE *fp = fopen(history_file_path, "w");
+		if (fp == NULL) {
+			perror("Unable to create history file");
+			return;
+		}
+		fclose(fp);
+	}
 	// 检查输入是否与最后一条历史记录相同
 	FILE *fph = fopen(history_file_path, "r");
 	if (fph == NULL) {
