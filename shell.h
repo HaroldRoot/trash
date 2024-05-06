@@ -7,6 +7,8 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <pwd.h>
+#include <readline/history.h>
+#include <readline/readline.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -65,7 +67,7 @@ char *get_username();
 char *get_hostname();
 char *get_which(char *cmd);
 
-void print_prompt();
+char *prompt();
 
 char *read_input();
 void process(char *input);
@@ -90,8 +92,6 @@ void print_help(char **argv);
 
 void print_logo();
 int num_builtins();
-void save_history(char *input);
-void trim_history();
 void print_history();
 
 #endif				// SHELL_H

@@ -28,4 +28,7 @@ void init()
 	print_logo();
 	printf("TRASH startup is completed.\n");
 	printf("Type 'help' for more information.\n");
+
+	using_history();
+	read_history(history_file_path);
 }

@@ -8,39 +8,24 @@
 int main()
 {
 	init();
+	char *input, *prompt_str;
 	while (1) {
-		print_prompt();
-		char *input = read_input();
-		process(input);
+		prompt_str = prompt();
+		input = readline(prompt_str);
+		free(prompt_str);
+		if (input == NULL) {
+			printf("Exiting trash...\n");
+			write_history(history_file_path);
+			break;
+		}
+		if (*input) {
+			add_history(input);
+			write_history(history_file_path);
+			process(input);
+		}
+		free(input);
 	}
 	return 0;
-}
-
-char *read_input()
-{
-	int bufsize = BUFSIZE;
-	int position = 0;
-	char *buffer = malloc(sizeof(char) * bufsize);
-	check_null(buffer);
-	int c;
-	while (1) {
-		c = getchar();
-		if (c == EOF) {
-			printf("\nExiting trash...\n");
-			exit(EXIT_SUCCESS);
-		} else if (c == '\n') {
-			buffer[position] = '\0';
-			return buffer;
-		} else {
-			buffer[position] = c;
-		}
-		position++;
-		if (position >= bufsize) {
-			bufsize += BUFSIZE;
-			buffer = realloc(buffer, bufsize);
-			check_null(buffer);
-		}
-	}
 }
 
 void process(char *input)
@@ -48,8 +33,6 @@ void process(char *input)
 	input = trim_leading_space(input);
 	if (strlen(input) == 0)
 		return;
-
-	save_history(input);
 
 	int cmdcnt = 0;
 	char *cmd[MAX_CMD][MAX_ARGC] = { NULL };
