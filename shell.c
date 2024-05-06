@@ -15,12 +15,9 @@ int main()
 		free(prompt_str);
 		if (input == NULL) {
 			printf("Exiting trash...\n");
-			write_history(history_file_path);
 			break;
 		}
 		if (*input) {
-			add_history(input);
-			write_history(history_file_path);
 			process(input);
 		}
 		free(input);
@@ -28,11 +25,14 @@ int main()
 	return 0;
 }
 
-void process(char *input)
+void process(char *raw_input)
 {
-	input = trim_leading_space(input);
+	char *input = trim_spaces(raw_input);
+	free(raw_input);
 	if (strlen(input) == 0)
 		return;
+
+	save_history(input);
 
 	int cmdcnt = 0;
 	char *cmd[MAX_CMD][MAX_ARGC] = { NULL };

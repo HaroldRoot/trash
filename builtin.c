@@ -125,6 +125,48 @@ void handle_history(char **argv)
 	}
 }
 
+void save_history(char *input)
+{
+	// 检查输入是否为空
+	if (input == NULL || strlen(input) == 0) {
+		return;
+	}
+	// 检查历史文件路径是否存在，如果不存在则创建
+	struct stat st = { 0 };
+	if (stat(history_file_path, &st) == -1) {
+		FILE *fp = fopen(history_file_path, "w");
+		if (fp == NULL) {
+			perror("Unable to create history file");
+			return;
+		}
+		fclose(fp);
+	}
+	// 检查输入是否与最后一条历史记录相同
+	FILE *fph = fopen(history_file_path, "r");
+	if (fph == NULL) {
+		perror("Unable to open history file");
+		return;
+	}
+
+	char last_line[PATH_MAX] = { 0 };
+	char *line = NULL;
+	size_t len = 0;
+	while (getline(&line, &len, fph) != -1) {
+		if (line[strlen(line) - 1] == '\n') {
+			line[strlen(line) - 1] = '\0';	// 移除换行符
+		}
+		strcpy(last_line, line);
+	}
+	free(line);
+	fclose(fph);
+
+	// 如果输入与最后一条历史记录不同，则保存
+	if (strcmp(last_line, input) != 0) {
+		add_history(input);
+		write_history(history_file_path);
+	}
+}
+
 void print_history(int n)
 {
 	FILE *fph = fopen(history_file_path, "r");
@@ -153,7 +195,7 @@ void print_history(int n)
 	// 打印所需的历史记录行
 	while ((getline(&line, &len, fph)) != -1
 	       && (n == 0 || line_number >= start_line)) {
-		printf("%4d %s", line_number, line);
+		printf("%4d  %s", line_number, line);
 		line_number++;
 	}
 

@@ -135,3 +135,22 @@ void strip_quotes(char **word)
 		*word = realloc(*word, len - 1);
 	}
 }
+
+char *trim_spaces(const char *input)
+{
+	char *output = malloc(strlen(input) + 1);
+	if (!output)
+		return NULL;
+
+	const char *curr = input;
+	char *dest = output;
+
+	while (*curr) {
+		while (*curr == ' ' && *(curr + 1) == ' ')
+			curr++;	// 跳过连续的空格
+		*dest++ = *curr++;	// 复制字符
+	}
+	*dest = '\0';		// 空字符终止字符串
+
+	return output;
+}

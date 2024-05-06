@@ -75,6 +75,7 @@ char *prompt();
 void process(char *input);
 
 char *trim_leading_space(char *str);
+char *trim_spaces(const char *input);
 char *parse_path(char *str);
 void strip_quotes(char **word);
 
@@ -94,6 +95,7 @@ void print_help(char **argv);
 
 void print_logo();
 int num_builtins();
+void save_history(char *input);
 void print_history();
 
 #endif				// SHELL_H
