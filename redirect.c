@@ -104,13 +104,3 @@ void remove_argv(char **argv, int i)
 		i++;
 	}
 }
-
-void free_argv(char **argv)
-{
-	int i = 0;
-	while (argv[i] != NULL) {
-		free(argv[i]);
-		i++;
-	}
-	free(argv);
-}

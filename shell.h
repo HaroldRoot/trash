@@ -7,7 +7,6 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <pwd.h>
-#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -70,13 +69,12 @@ void print_prompt();
 
 char *read_input();
 void process(char *input);
-void signal_handler(int sig);
 
 char *trim_leading_space(char *str);
 char *parse_path(char *str);
 void strip_quotes(char **word);
 
-void execute(char *cmd);
+void execute(char **argv, char *actual);
 char **tokenize(char *cmd);
 char *detokenize(char **argv);
 void handle_external(char **argv, char *cmd);

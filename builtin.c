@@ -31,7 +31,7 @@ void exit_shell(char **argv)
 {
 	(void)argv;
 	printf("Exiting trash...\n");
-	kill(getppid(), SIGUSR1);
+	exit(EXIT_SUCCESS);
 }
 
 void print_help(char **argv)

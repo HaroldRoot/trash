@@ -15,6 +15,5 @@ void redirect_input(char **argv, int i, int *in_fd);
 void restore_std(int in_fd, int out_fd, int err_fd, int stdin_copy,
 		 int stdout_copy, int stderr_copy);
 void remove_argv(char **argv, int i);
-void free_argv(char **argv);
 
 #endif

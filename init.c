@@ -25,8 +25,6 @@ void init()
 	add_alias("h", "help");
 	num_aliases = 3;
 
-	signal(SIGUSR1, signal_handler);
-
 	print_logo();
 	printf("TRASH startup is completed.\n");
 	printf("Type 'help' for more information.\n");

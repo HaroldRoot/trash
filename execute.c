@@ -4,17 +4,8 @@
 
 extern char **environ;
 
-void execute(char *cmd)
+void execute(char **argv, char *actual)
 {
-	cmd = trim_leading_space(cmd);
-	if (strlen(cmd) == 0)
-		return;
-
-	save_history(cmd);
-
-	char *actual = expand_alias(cmd);
-	char **argv = tokenize(actual);
-
 	int in_fd = -1, out_fd = -1, err_fd = -1;
 	int stdin_copy = dup(STDIN_FILENO);
 	exit_if(stdin_copy < 0);
@@ -25,12 +16,9 @@ void execute(char *cmd)
 
 	handle_redirections(argv, &in_fd, &out_fd, &err_fd);
 
-	if (handle_builtin(argv) != 0) {
-		handle_external(argv, actual);
-	}
+	handle_external(argv, actual);
 
 	free(actual);
-	free_argv(argv);
 
 	restore_std(in_fd, out_fd, err_fd, stdin_copy, stdout_copy,
 		    stderr_copy);

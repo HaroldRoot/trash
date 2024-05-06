@@ -43,20 +43,27 @@ char *read_input()
 	}
 }
 
-void signal_handler(int sig)
-{
-	if (sig == SIGUSR1) {
-		exit(EXIT_SUCCESS);
-	}
-}
-
 void process(char *input)
 {
+	input = trim_leading_space(input);
+	if (strlen(input) == 0)
+		return;
+
+	save_history(input);
+
+	char *actual = expand_alias(input);
+	char **argv = tokenize(actual);
+
+	if (handle_builtin(argv) == 0) {
+		free(input);
+		free(actual);
+		return;
+	}
+
 	int cmdcnt = 0;
 	char *cmd[MAX_CMD][MAX_ARGC] = { NULL };
 	int i = 0;
 
-	char **argv = tokenize(input);
 	int argc = 0;
 	while (argv[argc] != NULL) {
 		argc++;
@@ -109,7 +116,7 @@ void process(char *input)
 			for (int j = 0; j < 2 * (cmdcnt - 1); j++) {
 				close(pipefds[j]);
 			}
-			execute(detokenize(cmd[i]));
+			execute(cmd[i], detokenize(cmd[i]));
 
 			dup2(stdin_copy, STDIN_FILENO);
 			dup2(stdout_copy, STDOUT_FILENO);
@@ -127,4 +134,7 @@ void process(char *input)
 	for (i = 0; i < cmdcnt; i++) {
 		wait(NULL);
 	}
+
+	free(input);
+	free(actual);
 }
