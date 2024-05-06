@@ -43,6 +43,13 @@ char *read_input()
 	}
 }
 
+void signal_handler(int sig)
+{
+	if (sig == SIGUSR1) {
+		exit(EXIT_SUCCESS);
+	}
+}
+
 void process(char *input)
 {
 	int cmdcnt = 0;
