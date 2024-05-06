@@ -4,6 +4,7 @@
 #define SHELL_H
 
 #include <ctype.h>
+#include <dirent.h>
 #include <fcntl.h>
 #include <limits.h>
 #include <pwd.h>
@@ -60,6 +61,8 @@ typedef struct {
 	BuiltinHandler handler;
 } BuiltinCmd;
 
+extern BuiltinCmd builtins[];
+
 // Function declarations
 char *get_current_directory();
 char *get_home_directory();
@@ -69,7 +72,6 @@ char *get_which(char *cmd);
 
 char *prompt();
 
-char *read_input();
 void process(char *input);
 
 char *trim_leading_space(char *str);
