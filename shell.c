@@ -51,19 +51,12 @@ void process(char *input)
 
 	save_history(input);
 
-	char *actual = expand_alias(input);
-	char **argv = tokenize(actual);
-
-	if (handle_builtin(argv) == 0) {
-		free(input);
-		free(actual);
-		return;
-	}
-
 	int cmdcnt = 0;
 	char *cmd[MAX_CMD][MAX_ARGC] = { NULL };
 	int i = 0;
 
+	char *actual = expand_alias(input);
+	char **argv = tokenize(actual);
 	int argc = 0;
 	while (argv[argc] != NULL) {
 		argc++;
@@ -81,6 +74,11 @@ void process(char *input)
 	}
 	cmd[cmdcnt][i] = NULL;
 	cmdcnt++;
+
+	if (cmdcnt == 1) {
+		execute(actual);
+		return;
+	}
 
 	int pipefds[2 * (cmdcnt - 1)];
 	for (int i = 0; i < 2 * (cmdcnt - 1); i++) {
@@ -116,8 +114,7 @@ void process(char *input)
 			for (int j = 0; j < 2 * (cmdcnt - 1); j++) {
 				close(pipefds[j]);
 			}
-			execute(cmd[i], detokenize(cmd[i]));
-
+			execute(detokenize(cmd[i]));
 			dup2(stdin_copy, STDIN_FILENO);
 			dup2(stdout_copy, STDOUT_FILENO);
 			exit(EXIT_SUCCESS);

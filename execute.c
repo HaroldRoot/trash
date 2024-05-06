@@ -4,8 +4,11 @@
 
 extern char **environ;
 
-void execute(char **argv, char *actual)
+void execute(char *cmd)
 {
+	char *actual = expand_alias(cmd);
+	char **argv = tokenize(actual);
+
 	int in_fd = -1, out_fd = -1, err_fd = -1;
 	int stdin_copy = dup(STDIN_FILENO);
 	exit_if(stdin_copy < 0);
@@ -16,7 +19,9 @@ void execute(char **argv, char *actual)
 
 	handle_redirections(argv, &in_fd, &out_fd, &err_fd);
 
-	handle_external(argv, actual);
+	if (handle_builtin(argv) != 0) {
+		handle_external(argv, actual);
+	}
 
 	free(actual);
 

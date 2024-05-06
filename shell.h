@@ -74,7 +74,7 @@ char *trim_leading_space(char *str);
 char *parse_path(char *str);
 void strip_quotes(char **word);
 
-void execute(char **argv, char *actual);
+void execute(char *cmd);
 char **tokenize(char *cmd);
 char *detokenize(char **argv);
 void handle_external(char **argv, char *cmd);
