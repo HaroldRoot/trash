@@ -83,8 +83,8 @@ void strip_quotes(char **word);
 void execute(char *cmd);
 char **tokenize(char *cmd);
 char *detokenize(char **argv);
-void handle_external(char **argv, char *cmd);
-ExecuteResult execute_external(char **argv);
+void handle_external(char **argv, char *cmd,int run_in_background);
+ExecuteResult execute_external(char **argv,int run_in_background);
 
 int handle_builtin(char **argv);
 void exit_shell(char **argv);

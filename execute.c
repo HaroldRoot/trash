@@ -19,8 +19,20 @@ void execute(char *cmd)
 
 	handle_redirections(argv, &in_fd, &out_fd, &err_fd);
 
+	// Check if the command should run in the background
+	int run_in_background = 0;
+	int argc = 0;
+	while (argv[argc] != NULL) {
+		if (strcmp(argv[argc], "&") == 0) {
+			run_in_background = 1;
+			argv[argc] = NULL;	// Remove the '&' from arguments
+			break;
+		}
+		argc++;
+	}
+
 	if (handle_builtin(argv) != 0) {
-		handle_external(argv, actual);
+		handle_external(argv, actual, run_in_background);
 	}
 
 	free(actual);
@@ -29,18 +41,18 @@ void execute(char *cmd)
 		    stderr_copy);
 }
 
-void handle_external(char **argv, char *cmd)
+void handle_external(char **argv, char *cmd, int run_in_background)
 {
 	(void)cmd;
 
-	ExecuteResult result = execute_external(argv);
+	ExecuteResult result = execute_external(argv, run_in_background);
 
 	if (result == EXECUTE_FAILURE) {
 		fprintf(stderr, "External command execution failed\n");
 	}
 }
 
-ExecuteResult execute_external(char **argv)
+ExecuteResult execute_external(char **argv, int run_in_background)
 {
 	if (!argv || !argv[0]) {
 		return EXECUTE_FAILURE;
@@ -64,20 +76,25 @@ ExecuteResult execute_external(char **argv)
 		perror("execve");
 		_exit(EXIT_FAILURE);
 	} else {
-		int status;
-		waitpid(pid, &status, 0);
-		if (WIFEXITED(status)) {
-			int exit_status = WEXITSTATUS(status);
-			return exit_status ==
-			    0 ? EXECUTE_SUCCESS : EXECUTE_FAILURE;
-		} else {
-			if (WIFSIGNALED(status)) {
-				int signal_number = WTERMSIG(status);
-				fprintf(stderr,
-					"Process was terminated by signal %d\n",
-					signal_number);
+		if (!run_in_background) {
+			int status;
+			waitpid(pid, &status, 0);
+			if (WIFEXITED(status)) {
+				int exit_status = WEXITSTATUS(status);
+				return exit_status ==
+				    0 ? EXECUTE_SUCCESS : EXECUTE_FAILURE;
+			} else {
+				if (WIFSIGNALED(status)) {
+					int signal_number = WTERMSIG(status);
+					fprintf(stderr,
+						"Process was terminated by signal %d\n",
+						signal_number);
+				}
+				return EXECUTE_FAILURE;
 			}
-			return EXECUTE_FAILURE;
+		} else {
+			printf("Running in background, PID: %d\n", pid);
+			return EXECUTE_SUCCESS;
 		}
 	}
 }
