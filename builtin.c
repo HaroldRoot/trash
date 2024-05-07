@@ -3,11 +3,11 @@
 #include "shell.h"
 
 BuiltinCmd builtins[] = {
+	{"cd", &handle_cd},
 	{"exit", &exit_shell},
 	{"help", &print_help},
 	{"alias", &handle_alias},
 	{"unalias", &handle_unalias},
-	{"cd", &handle_cd},
 	{"history", &handle_history}
 };
 
@@ -39,22 +39,25 @@ void print_help(char **argv)
 	(void)argv;
 	print_logo();
 
-	printf("TRASH is the abbreviation of TRAsh SHell.\n");
+	printf(BOLD "TRASH" RESET " is the abbreviation of " BOLD "Tra" RESET
+	       "sh " BOLD "Sh" RESET "ell.\n");
 	printf("This is an OS course assignment for juniors.\n");
 	printf("Builtin Commands are as follows:\n\n");
 
 	int i;
 	for (i = 0; i < num_builtins(); i++) {
-		printf("  %s\n", builtins[i].name);
+		printf(BOLD YELLOW "  %s\n" RESET, builtins[i].name);
 	}
 
-	printf("\nUse 'man' command for information on external programs.\n");
+	printf("\nUse " BOLD UNDERLINE CYAN "man" RESET
+	       " command for information on external programs.\n\n");
 }
 
 void print_logo()
 {
 	srand(time(NULL));
-	int file_index = rand() % MAX_FILES;
+	// int file_index = rand() % MAX_FILES;
+	int file_index = (rand() % 2) ? 6 : 8;
 	char filename[MAX_FILENAME_LENGTH];
 	sprintf(filename, "logos/%d.txt", file_index);
 
@@ -64,10 +67,12 @@ void print_logo()
 		return;
 	}
 
+	printf(MAGENTA);
 	int c;
 	while ((c = fgetc(file)) != EOF) {
 		putchar(c);
 	}
+	printf(RESET);
 
 	fclose(file);
 	return;

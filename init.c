@@ -162,8 +162,9 @@ void init()
 	num_aliases = 3;
 
 	print_logo();
-	printf("TRASH startup is completed.\n");
-	printf("Type 'help' for more information.\n");
+	printf(BOLD "TRASH" RESET " startup is completed.\n");
+	printf("Type " BOLD UNDERLINE YELLOW "help" RESET
+	       " for more information.\n\n");
 
 	initialize_readline();
 	using_history();

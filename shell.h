@@ -21,6 +21,7 @@
 #include "alias.h"
 #include "redirect.h"
 #include "init.h"
+#include "ansicode.h"
 
 // Macros
 #define check_null(ptr) \
@@ -41,7 +42,7 @@
 #define MAX_WORDS 128
 #define MAX_COMMAND_LENGTH 1024
 #define BUFSIZE 64
-#define PROMPT_FORMAT "[%s@%s %s]%c "
+#define PROMPT_FORMAT "[" BOLD BLUE "%s@%s " RESET BOLD GREEN "%s" RESET "]%c "
 #define MAX_FILES 20
 #define MAX_FILENAME_LENGTH 20
 #define HISTSIZE 1000
