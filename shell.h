@@ -46,6 +46,7 @@
 #define MAX_FILES 20
 #define MAX_FILENAME_LENGTH 20
 #define HISTSIZE 1000
+#define MAX_JOBS 10
 
 // Enums
 typedef enum {
@@ -63,6 +64,14 @@ typedef struct {
 } BuiltinCmd;
 
 extern BuiltinCmd builtins[];
+
+typedef struct {
+	pid_t pid;
+	char *cmd;
+} BgJob;
+
+extern BgJob bg_jobs[MAX_JOBS];
+extern int num_bg_jobs;
 
 // Function declarations
 char *get_current_directory();
@@ -87,16 +96,18 @@ void handle_external(char **argv, char *cmd,int run_in_background);
 ExecuteResult execute_external(char **argv,int run_in_background);
 
 int handle_builtin(char **argv);
+int num_builtins();
 void exit_shell(char **argv);
 void handle_cd(char **argv);
 void handle_alias(char **argv);
 void handle_unalias(char **argv);
 void handle_history(char **argv);
-void print_help(char **argv);
-
-void print_logo();
-int num_builtins();
 void save_history(char *input);
 void print_history();
+void print_help(char **argv);
+void print_logo();
+void handle_jobs(char **argv);
+void add_bg_job(pid_t pid, char *cmd);
+void print_bg_jobs();
 
 #endif				// SHELL_H

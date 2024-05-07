@@ -93,6 +93,7 @@ ExecuteResult execute_external(char **argv, int run_in_background)
 				return EXECUTE_FAILURE;
 			}
 		} else {
+			add_bg_job(pid, detokenize(argv));
 			printf("Running in background, PID: %d\n", pid);
 			return EXECUTE_SUCCESS;
 		}

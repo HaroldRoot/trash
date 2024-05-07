@@ -4,6 +4,7 @@
 
 BuiltinCmd builtins[] = {
 	{"cd", &handle_cd},
+	{"jobs", &handle_jobs},
 	{"exit", &exit_shell},
 	{"help", &print_help},
 	{"alias", &handle_alias},
@@ -206,4 +207,29 @@ void print_history(int n)
 
 	free(line);
 	fclose(fph);
+}
+
+void handle_jobs(char **argv)
+{
+	(void)argv;
+	print_bg_jobs();
+}
+
+void add_bg_job(pid_t pid, char *cmd)
+{
+	if (num_bg_jobs < MAX_JOBS) {
+		bg_jobs[num_bg_jobs].pid = pid;
+		bg_jobs[num_bg_jobs].cmd = cmd;
+		num_bg_jobs++;
+	}
+}
+
+void print_bg_jobs()
+{
+	printf("Background jobs:\n");
+	for (int i = 0; i < num_bg_jobs; i++) {
+		printf("[%d] %c %d %s\n", i + 1,
+		       (i == num_bg_jobs - 1) ? '+' : '-',
+		       bg_jobs[i].pid, bg_jobs[i].cmd);
+	}
 }

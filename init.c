@@ -9,6 +9,8 @@ char *hostname = NULL;
 char *current_directory = NULL;
 Alias *aliases_head;
 int num_aliases = 0;
+BgJob bg_jobs[MAX_JOBS];
+int num_bg_jobs = 0;
 
 // 命令补全函数
 char **command_completion(const char *text, int start, int end)
