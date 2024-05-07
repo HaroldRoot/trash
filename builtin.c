@@ -228,8 +228,28 @@ void print_bg_jobs()
 {
 	printf("Background jobs:\n");
 	for (int i = 0; i < num_bg_jobs; i++) {
-		printf("[%d] %c %d %s\n", i + 1,
-		       (i == num_bg_jobs - 1) ? '+' : '-',
-		       bg_jobs[i].pid, bg_jobs[i].cmd);
+		printf("[%d] %d %s\n", i + 1, bg_jobs[i].pid, bg_jobs[i].cmd);
+	}
+}
+
+char *get_cmd_by_pid(pid_t pid)
+{
+	for (int i = 0; i < num_bg_jobs; i++) {
+		if (bg_jobs[i].pid == pid) {
+			return bg_jobs[i].cmd;
+		}
+	}
+	return NULL;
+}
+
+void remove_bg_job(pid_t pid)
+{
+	for (int i = 0; i < num_bg_jobs; i++) {
+		if (bg_jobs[i].pid == pid) {
+			free(bg_jobs[i].cmd);	// 释放命令字符串的内存
+			bg_jobs[i] = bg_jobs[num_bg_jobs - 1];	// 将最后一个作业移动到当前位置
+			num_bg_jobs--;	// 减少作业数量
+			return;
+		}
 	}
 }

@@ -10,6 +10,7 @@
 #include <pwd.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -109,5 +110,7 @@ void print_logo();
 void handle_jobs(char **argv);
 void add_bg_job(pid_t pid, char *cmd);
 void print_bg_jobs();
+char *get_cmd_by_pid(pid_t pid);
+void remove_bg_job(pid_t pid);
 
 #endif				// SHELL_H

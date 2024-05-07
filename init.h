@@ -14,6 +14,7 @@ char *command_generator(const char *text, int state);
 int is_executable(const char *path);
 char **get_commands();
 void initialize_readline();
+void sigchld_handler(int signum);
 void init();
 
 #endif

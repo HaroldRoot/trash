@@ -148,6 +148,26 @@ void initialize_readline()
 	rl_attempted_completion_function = command_completion;
 }
 
+void sigchld_handler(int signum)
+{
+	(void)signum;
+
+	int status;
+	pid_t pid;
+
+	// 使用 WNOHANG 非阻塞地检查子进程状态
+	while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
+		if (WIFEXITED(status)) {
+			printf("\n[%d] done       %s\n", pid,
+			       get_cmd_by_pid(pid));
+			remove_bg_job(pid);	// 从后台作业列表中移除
+			char *prompt_str = prompt();
+			printf("%s", prompt_str);
+			fflush(stdout);
+		}
+	}
+}
+
 void init()
 {
 	getcwd(startup_directory, sizeof(startup_directory));
@@ -171,4 +191,6 @@ void init()
 	initialize_readline();
 	using_history();
 	read_history(history_file_path);
+
+	signal(SIGCHLD, sigchld_handler);
 }
