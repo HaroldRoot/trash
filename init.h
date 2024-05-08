@@ -17,6 +17,7 @@ void free_commands(char **commands);
 char *create_full_path(const char *dir, const char *file);
 void initialize_readline();
 void sigchld_handler(int signum);
+void sigint_handler(int signum);
 void init();
 
 #endif

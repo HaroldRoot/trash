@@ -209,6 +209,8 @@ void initialize_readline()
 {
 	// 设置命令补全函数
 	rl_attempted_completion_function = command_completion;
+	// 忽略 readline 库内部的 SIGINT 处理
+	rl_catch_signals = 0;
 }
 
 void sigchld_handler(int signum)
@@ -250,6 +252,17 @@ void sigchld_handler(int signum)
 	fflush(stdout);
 }
 
+void sigint_handler(int signum)
+{
+	(void)signum;
+	// 清除 readline 的当前行
+	rl_replace_line("", 0);
+	// 重新显示提示符
+	printf("\n");
+	rl_on_new_line();
+	rl_redisplay();
+}
+
 void init()
 {
 	getcwd(startup_directory, sizeof(startup_directory));
@@ -275,4 +288,5 @@ void init()
 	read_history(history_file_path);
 
 	signal(SIGCHLD, sigchld_handler);
+	signal(SIGINT, sigint_handler);
 }
