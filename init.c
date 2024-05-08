@@ -217,39 +217,31 @@ void sigchld_handler(int signum)
 {
 	(void)signum;
 
-	// 暂存 readline 的状态
-	char *saved_line = NULL;
-	int saved_point = rl_point;
-
-	if (rl_line_buffer) {
-		saved_line = strdup(rl_line_buffer);
-		rl_save_prompt();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
-
 	int status;
 	pid_t pid;
 
 	// 使用 WNOHANG 非阻塞地检查子进程状态
 	while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
-		if (WIFEXITED(status)) {
+		if (is_bg_job(pid)) {
+			// 如果是后台作业，打印完成消息
 			printf("\n[%d] done       %s\n", pid,
 			       get_cmd_by_pid(pid));
 			remove_bg_job(pid);	// 从后台作业列表中移除
+
+			// 暂存 readline 的状态
+			char *saved_line = rl_copy_text(0, rl_end);
+			rl_save_prompt();
+			rl_replace_line("", 0);
+			rl_redisplay();
+
+			// 恢复 readline 的状态
+			rl_restore_prompt();
+			rl_replace_line(saved_line, 0);
+			rl_point = rl_end;
+			rl_redisplay();
+			free(saved_line);
 		}
 	}
-
-	// 恢复 readline 的状态
-	if (saved_line) {
-		rl_restore_prompt();
-		rl_replace_line(saved_line, 0);
-		rl_point = saved_point;
-		rl_redisplay();
-		free(saved_line);
-	}
-
-	fflush(stdout);
 }
 
 void sigint_handler(int signum)

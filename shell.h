@@ -114,5 +114,6 @@ void add_bg_job(pid_t pid, char *cmd);
 void print_bg_jobs();
 char *get_cmd_by_pid(pid_t pid);
 void remove_bg_job(pid_t pid);
+int is_bg_job(pid_t pid);
 
 #endif				// SHELL_H

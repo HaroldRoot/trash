@@ -253,3 +253,13 @@ void remove_bg_job(pid_t pid)
 		}
 	}
 }
+
+int is_bg_job(pid_t pid)
+{
+	for (int i = 0; i < num_bg_jobs; i++) {
+		if (bg_jobs[i].pid == pid) {
+			return 1;	// 找到了，是后台作业
+		}
+	}
+	return 0;		// 没找到，不是后台作业
+}
