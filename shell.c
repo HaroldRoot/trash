@@ -2,9 +2,6 @@
 
 #include "shell.h"
 
-#define MAX_CMD 10
-#define MAX_ARGC 10
-
 int main()
 {
 	init();

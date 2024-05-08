@@ -42,6 +42,8 @@
 // Global constants and variables
 #define MAX_WORDS 128
 #define MAX_COMMAND_LENGTH 1024
+#define MAX_CMD 10
+#define MAX_ARGC 10
 #define BUFSIZE 64
 #define PROMPT_FORMAT "[" BOLD BLUE "%s@%s " RESET BOLD GREEN "%s" RESET "]%c "
 #define MAX_FILES 20
