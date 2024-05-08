@@ -85,7 +85,7 @@ char *prompt();
 
 void process(char *input);
 
-char *trim_leading_space(char *str);
+char *trim_leading_spaces(char *str);
 char *trim_spaces(const char *input);
 char *parse_path(char *str);
 void strip_quotes(char **word);

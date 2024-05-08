@@ -13,6 +13,8 @@ char **command_completion(const char *text, int start, int end);
 char *command_generator(const char *text, int state);
 int is_executable(const char *path);
 char **get_commands();
+void free_commands(char **commands);
+char *create_full_path(const char *dir, const char *file);
 void initialize_readline();
 void sigchld_handler(int signum);
 void init();

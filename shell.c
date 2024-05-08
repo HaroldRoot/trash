@@ -8,7 +8,7 @@
 int main()
 {
 	init();
-	char *input, *prompt_str;
+	char *input = NULL, *prompt_str;
 	while (1) {
 		prompt_str = prompt();
 		input = readline(prompt_str);
@@ -20,25 +20,36 @@ int main()
 		if (*input) {
 			process(input);
 		}
-		free(input);
+		input = NULL;
 	}
 	return 0;
 }
 
 void process(char *raw_input)
 {
-	char *input = trim_spaces(raw_input);
-	free(raw_input);
-	if (strlen(input) == 0)
+	char *input = trim_leading_spaces(raw_input);
+	if (input == NULL || *input == '\0') {
+		free(input);	// 如果输入为空或全是空格，释放内存并返回
+		return;
+	}
+
+	char *processed_input = trim_spaces(input);
+	free(input);		// 释放由 trim_leading_spaces 分配的内存
+	if (processed_input == NULL || *processed_input == '\0') {
+		free(processed_input);	// 如果处理后的输入为空，释放内存并返回
+		return;
+	}
+
+	if (strlen(processed_input) == 0)
 		return;
 
-	save_history(input);
+	save_history(processed_input);
 
 	int cmdcnt = 0;
 	char *cmd[MAX_CMD][MAX_ARGC] = { NULL };
 	int i = 0;
 
-	char *actual = expand_alias(input);
+	char *actual = expand_alias(processed_input);
 	char **argv = tokenize(actual);
 	int argc = 0;
 	while (argv[argc] != NULL) {
@@ -115,6 +126,6 @@ void process(char *raw_input)
 		wait(NULL);
 	}
 
-	free(input);
+	free(processed_input);
 	free(actual);
 }

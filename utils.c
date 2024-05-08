@@ -94,13 +94,6 @@ char *get_which(char *cmd)
 	return NULL;
 }
 
-char *trim_leading_space(char *str)
-{
-	while (isspace((unsigned char)*str))
-		str++;
-	return str;
-}
-
 char *parse_path(char *path)
 {
 	if (path[0] != '~')
@@ -136,8 +129,21 @@ void strip_quotes(char **word)
 	}
 }
 
+char *trim_leading_spaces(char *str)
+{
+	char *original = str;	// 保存原始指针以便释放
+	while (isspace((unsigned char)*str))
+		str++;
+	char *trimmed = strdup(str);
+	free(original);		// 释放原始字符串
+	return trimmed;
+}
+
 char *trim_spaces(const char *input)
 {
+	if (input == NULL)
+		return NULL;
+
 	char *output = malloc(strlen(input) + 1);
 	if (!output)
 		return NULL;
