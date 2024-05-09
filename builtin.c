@@ -57,10 +57,18 @@ void print_help(char **argv)
 void print_logo()
 {
 	srand(time(NULL));
-	// int file_index = rand() % MAX_FILES;
 	int file_index = (rand() % 2) ? 6 : 8;
-	char filename[MAX_FILENAME_LENGTH];
-	sprintf(filename, "logos/%d.txt", file_index);
+	char filename[PATH_MAX];	// 使用 PATH_MAX 作为 filename 的大小
+
+	// 检查 startup_directory 的实际长度
+	size_t startup_length = strlen(startup_directory);
+	if (startup_length + 15 >= PATH_MAX) {	// "/logos/%d.txt" 最长为 15 个字符
+		fprintf(stderr, "Error: startup_directory is too long\n");
+		return;
+	}
+	// 使用 snprintf 安全地构造路径
+	snprintf(filename, sizeof(filename), "%s/logos/%d.txt",
+		 startup_directory, file_index);
 
 	FILE *file = fopen(filename, "r");
 	if (file == NULL) {
