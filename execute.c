@@ -48,7 +48,8 @@ void handle_external(char **argv, char *cmd, int run_in_background)
 	ExecuteResult result = execute_external(argv, run_in_background);
 
 	if (result == EXECUTE_FAILURE) {
-		fprintf(stderr, "External command execution failed\n");
+		//fprintf(stderr, "External command execution failed\n");
+		system(cmd);
 	}
 }
 
@@ -62,7 +63,7 @@ ExecuteResult execute_external(char **argv, int run_in_background)
 	char *actual = get_which(cmd);
 
 	if (!actual) {
-		fprintf(stderr, "Command not found: %s\n", cmd);
+		//fprintf(stderr, "Command not found: %s\n", cmd);
 		return EXECUTE_FAILURE;
 	}
 
@@ -73,8 +74,10 @@ ExecuteResult execute_external(char **argv, int run_in_background)
 		return EXECUTE_FAILURE;
 	} else if (pid == 0) {
 		execve(actual, argv, environ);
-		perror("execve");
-		_exit(EXIT_FAILURE);
+		system(actual);
+		//perror("execve");
+		//_exit(EXIT_FAILURE);
+		_exit(EXIT_SUCCESS);
 	} else {
 		if (!run_in_background) {
 			int status;
