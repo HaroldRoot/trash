@@ -46,4 +46,6 @@ char *get_cmd_by_pid(pid_t pid);
 void remove_bg_job(pid_t pid);
 int is_bg_job(pid_t pid);
 
+void handle_type(char **argv);
+
 #endif

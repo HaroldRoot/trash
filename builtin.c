@@ -4,6 +4,7 @@
 
 BuiltinCmd builtins[] = {
 	{"cd", &handle_cd},
+	{"type", &handle_type},
 	{"jobs", &handle_jobs},
 	{"exit", &exit_shell},
 	{"help", &print_help},
@@ -269,4 +270,34 @@ int is_bg_job(pid_t pid)
 		}
 	}
 	return 0;		// 没找到，不是后台作业
+}
+
+void handle_type(char **argv)
+{
+	if (argv[1] == NULL) {
+		// If no argument is provided, do nothing
+		return;
+	}
+
+	char *cmd = argv[1];
+	Alias *alias = find_alias(cmd);
+	if (alias) {
+		printf("%s is an alias for %s\n", cmd, alias->replacement);
+		return;
+	}
+
+	for (int i = 0; i < num_builtins(); i++) {
+		if (strcmp(cmd, builtins[i].name) == 0) {
+			printf("%s is a shell builtin\n", cmd);
+			return;
+		}
+	}
+
+	char *path = get_which(cmd);
+	if (path) {
+		printf("%s is %s\n", cmd, path);
+		free(path);
+	} else {
+		printf("%s not found\n", cmd);
+	}
 }
