@@ -50,7 +50,6 @@
 #define MAX_CMD 10
 #define MAX_ARGC 10
 #define BUFSIZE 64
-#define PROMPT_FORMAT "[" BOLD BLUE "%s@%s " RESET BOLD GREEN "%s" RESET "]%c "
 #define MAX_FILES 20
 #define MAX_FILENAME_LENGTH 256
 #define HISTSIZE 1000

@@ -5,8 +5,12 @@
 char *prompt()
 {
 	char prompt_symbol = '$';
+	char *PROMPT_FORMAT =
+	    "[" BOLD BLUE "%s@%s " RESET BOLD GREEN "%s" RESET "]%c ";
 	if (geteuid() == 0) {
 		prompt_symbol = '#';
+		PROMPT_FORMAT =
+		    "[" BOLD RED "%s@%s " RESET BOLD GREEN "%s" RESET "]%c ";
 	}
 	// 计算提示符字符串的长度
 	const char *username = get_username();

@@ -38,10 +38,9 @@ void exit_shell(char **argv)
 void print_help(char **argv)
 {
 	(void)argv;
-	print_logo();
 
-	printf(BOLD "TRASH" RESET " is the abbreviation of " BOLD "Tra" RESET
-	       "sh " BOLD "Sh" RESET "ell.\n");
+	printf("\n" BOLD "TRASH" RESET " is the abbreviation of " BOLD "Tra"
+	       RESET "sh " BOLD "Sh" RESET "ell.\n");
 	printf("This is an OS course assignment for juniors.\n");
 	printf("Builtin Commands are as follows:\n\n");
 
@@ -57,7 +56,7 @@ void print_help(char **argv)
 void print_logo()
 {
 	srand(time(NULL));
-	int file_index = (rand() % 2) ? 6 : 8;
+	int file_index = 8;
 	char filename[PATH_MAX];	// 使用 PATH_MAX 作为 filename 的大小
 
 	// 检查 startup_directory 的实际长度
