@@ -22,6 +22,61 @@ int main()
 	return 0;
 }
 
+void create_pipes(int pipefds[], int cmdcnt)
+{
+	for (int i = 0; i < 2 * (cmdcnt - 1); i++) {
+		if (pipe(pipefds + i * 2) < 0) {
+			perror("pipe");
+			exit(EXIT_FAILURE);
+		}
+	}
+}
+
+void fork_and_execute(char *cmd[MAX_CMD][MAX_ARGC], int cmdcnt, int pipefds[])
+{
+	int stdin_copy = dup(STDIN_FILENO);
+	int stdout_copy = dup(STDOUT_FILENO);
+
+	for (int i = 0; i < cmdcnt; i++) {
+		pid_t pid = fork();
+		if (pid == 0) {	// 子进程
+			if (i != 0) {
+				if (dup2(pipefds[(i - 1) * 2], STDIN_FILENO) <
+				    0) {
+					perror("dup2");
+					exit(EXIT_FAILURE);
+				}
+			}
+			if (i != cmdcnt - 1) {
+				if (dup2(pipefds[i * 2 + 1], STDOUT_FILENO) < 0) {
+					perror("dup2");
+					exit(EXIT_FAILURE);
+				}
+			}
+			for (int j = 0; j < 2 * (cmdcnt - 1); j++) {
+				close(pipefds[j]);
+			}
+			char *expanded_command = detokenize(cmd[i]);
+			execute(expanded_command);
+			free(expanded_command);
+			dup2(stdin_copy, STDIN_FILENO);
+			dup2(stdout_copy, STDOUT_FILENO);
+			exit(EXIT_SUCCESS);
+		} else if (pid < 0) {
+			perror("fork");
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	for (int i = 0; i < 2 * (cmdcnt - 1); i++) {
+		close(pipefds[i]);
+	}
+
+	for (int i = 0; i < cmdcnt; i++) {
+		wait(NULL);
+	}
+}
+
 void process(char *raw_input)
 {
 	char *input = trim_leading_spaces(raw_input);
@@ -74,58 +129,8 @@ void process(char *raw_input)
 	}
 
 	int pipefds[2 * (cmdcnt - 1)];
-	for (int i = 0; i < 2 * (cmdcnt - 1); i++) {
-		pipefds[i] = -1;
-	}
-
-	for (i = 0; i < (cmdcnt - 1); i++) {
-		if (pipe(pipefds + i * 2) < 0) {
-			perror("pipe");
-			exit(EXIT_FAILURE);
-		}
-	}
-
-	int stdin_copy = dup(STDIN_FILENO);
-	int stdout_copy = dup(STDOUT_FILENO);
-
-	for (i = 0; i < cmdcnt; i++) {
-		pid_t pid = fork();
-		if (pid == 0) {
-			if (i != 0) {
-				if (dup2(pipefds[(i - 1) * 2], STDIN_FILENO) <
-				    0) {
-					perror("dup2");
-					exit(EXIT_FAILURE);
-				}
-			}
-			if (i != cmdcnt - 1) {
-				if (dup2(pipefds[i * 2 + 1], STDOUT_FILENO) < 0) {
-					perror("dup2");
-					exit(EXIT_FAILURE);
-				}
-			}
-			for (int j = 0; j < 2 * (cmdcnt - 1); j++) {
-				close(pipefds[j]);
-			}
-			char *expanded_command = detokenize(cmd[i]);
-			execute(expanded_command);
-			free(expanded_command);
-			dup2(stdin_copy, STDIN_FILENO);
-			dup2(stdout_copy, STDOUT_FILENO);
-			exit(EXIT_SUCCESS);
-		} else if (pid < 0) {
-			perror("fork");
-			exit(EXIT_FAILURE);
-		}
-	}
-
-	for (i = 0; i < 2 * (cmdcnt - 1); i++) {
-		close(pipefds[i]);
-	}
-
-	for (i = 0; i < cmdcnt; i++) {
-		wait(NULL);
-	}
+	create_pipes(pipefds, cmdcnt);
+	fork_and_execute(cmd, cmdcnt, pipefds);
 
 	free(processed_input);
 	free(actual);

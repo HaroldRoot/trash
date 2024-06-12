@@ -55,6 +55,8 @@
 #define HISTSIZE 1000
 
 // Function declarations
+void create_pipes(int pipefds[], int cmdcnt);
+void fork_and_execute(char *cmd[MAX_CMD][MAX_ARGC], int cmdcnt, int pipefds[]);
 void process(char *input);
 char* replace_env_vars(char* arg);
 
