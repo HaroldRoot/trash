@@ -56,5 +56,6 @@
 
 // Function declarations
 void process(char *input);
+char* replace_env_vars(char* arg);
 
 #endif				// SHELL_H

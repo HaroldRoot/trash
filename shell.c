@@ -59,7 +59,7 @@ void process(char *raw_input)
 			cmdcnt++;
 			i = 0;
 		} else {
-			cmd[cmdcnt][i] = argv[arg];
+			cmd[cmdcnt][i] = replace_env_vars(argv[arg]);
 			i++;
 		}
 	}
@@ -67,7 +67,9 @@ void process(char *raw_input)
 	cmdcnt++;
 
 	if (cmdcnt == 1) {
-		execute(actual);
+		char *expanded_command = detokenize(cmd[0]);
+		execute(expanded_command);
+		free(expanded_command);
 		return;
 	}
 
@@ -105,7 +107,9 @@ void process(char *raw_input)
 			for (int j = 0; j < 2 * (cmdcnt - 1); j++) {
 				close(pipefds[j]);
 			}
-			execute(detokenize(cmd[i]));
+			char *expanded_command = detokenize(cmd[i]);
+			execute(expanded_command);
+			free(expanded_command);
 			dup2(stdin_copy, STDIN_FILENO);
 			dup2(stdout_copy, STDOUT_FILENO);
 			exit(EXIT_SUCCESS);
@@ -125,4 +129,26 @@ void process(char *raw_input)
 
 	free(processed_input);
 	free(actual);
+}
+
+char *replace_env_vars(char *arg)
+{
+	if (arg[0] != '$') {
+		return arg;	// Not an environment variable
+	}
+
+	if (strcmp(arg, "$SHELL") == 0) {
+		char *shell_path =
+		    malloc(strlen(startup_directory) + strlen("/shell") + 1);
+		strcpy(shell_path, startup_directory);
+		strcat(shell_path, "/shell");
+		return shell_path;
+	}
+
+	char *env_value = getenv(arg + 1);	// Skip the '$' character
+	if (env_value) {
+		return strdup(env_value);
+	}
+
+	return arg;		// Return the original argument if not an environment variable
 }
